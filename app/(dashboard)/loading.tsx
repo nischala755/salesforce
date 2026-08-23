@@ -1,0 +1,1 @@
+export default function Loading(){return <main className="main" aria-live="polite"><p className="eyebrow">Loading</p><h1>Reading persisted evidence…</h1><div className="grid metrics">{[1,2,3,4].map(item=><div className="card" key={item}><span className="muted">Loading verified data</span></div>)}</div></main>}

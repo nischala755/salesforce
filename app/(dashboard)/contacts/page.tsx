@@ -1,0 +1,12 @@
+import Link from "next/link";
+import { prisma } from "@/lib/db";
+import { StatusBadge } from "@/components/status-badge";
+import { AssessButton } from "@/components/assess-button";
+
+export default async function ContactsPage({ searchParams }: { searchParams: Promise<{ q?: string; status?: string }> }) {
+  const {q="",status=""}=await searchParams;
+  const [contacts,settings]=await Promise.all([prisma.contact.findMany({where:q?{OR:[{name:{contains:q,mode:"insensitive"}},{email:{contains:q,mode:"insensitive"}},{department:{contains:q,mode:"insensitive"}}]}:undefined,include:{assessments:{orderBy:{assessedAt:"desc"},take:1,include:{_count:{select:{results:{where:{passed:false}}}}}}},orderBy:{name:"asc"}}),prisma.organizationSettings.findUnique({where:{id:"default"}})]);
+  const visible=status?contacts.filter(c=>c.assessments[0]?.finalStatus===status):contacts;
+  return <main className="main"><p className="eyebrow">Evidence inventory</p><h1>Contacts</h1><div className="section-row"><form className="form-grid" style={{flex:1}}><div className="field"><label htmlFor="q">Search</label><input id="q" name="q" defaultValue={q} placeholder="Name, email, department"/></div><div className="field"><label htmlFor="status">Latest status</label><select id="status" name="status" defaultValue={status}><option value="">All statuses</option><option value="compliant">Compliant</option><option value="at_risk">At risk</option><option value="non_compliant">Non-compliant</option></select></div><button className="btn secondary">Apply filters</button></form><AssessButton/></div>
+  <p className="muted small">{visible.length} contact{visible.length===1?"":"s"}</p><div className="table-wrap"><table><thead><tr><th>Contact</th><th>Department</th><th>Score</th><th>Status</th><th>Violations</th><th>Last assessed</th></tr></thead><tbody>{visible.map(contact=>{const a=contact.assessments[0];return <tr key={contact.id}><td><Link href={`/contacts/${contact.id}`}><strong>{contact.name}</strong></Link><br/><span className="small muted">{contact.email}</span></td><td>{contact.department}</td><td>{a?.score??"—"}</td><td>{a?<><StatusBadge status={a.finalStatus}/>{settings?.sdfMode&&a.score<80&&<><br/><span className="badge at_risk">▲ SDF Review Required</span></>}</>:<span className="muted">Unassessed</span>}</td><td>{a?._count.results??0}</td><td>{a?.assessedAt.toLocaleDateString("en-IN")??"—"}</td></tr>})}</tbody></table></div></main>;
+}

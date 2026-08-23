@@ -1,0 +1,4 @@
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+export function AssessButton({ contactIds = [] }: { contactIds?: string[] }) { const [busy,setBusy]=useState(false); const [message,setMessage]=useState(""); const router=useRouter(); return <div><button className="btn" disabled={busy} onClick={async()=>{setBusy(true);setMessage("");const response=await fetch("/api/assessments/run",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({contactIds})});const body=await response.json();setBusy(false);if(!response.ok){setMessage(body.error??"Assessment failed.");return;}setMessage(`${body.assessments.length} assessment${body.assessments.length===1?"":"s"} appended.`);router.refresh();}}>{busy?"Assessing…":"Run assessment"}</button>{message&&<span className="small muted" style={{marginLeft:8}}>{message}</span>}</div>; }

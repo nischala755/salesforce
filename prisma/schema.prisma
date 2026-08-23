@@ -1,0 +1,335 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  admin
+  dpo
+  reviewer
+  analyst
+}
+
+enum AssessmentStatus {
+  compliant
+  at_risk
+  non_compliant
+}
+
+enum Severity {
+  critical
+  high
+  medium
+  low
+}
+
+enum RecommendationStatus {
+  open
+  resolved
+  dismissed
+}
+
+enum RemediationStatus {
+  pending_approval
+  approved
+  rejected
+  applied
+}
+
+enum RightsRequestType {
+  access
+  correction
+  erasure
+  grievance
+}
+
+enum RequestStatus {
+  open
+  completed
+}
+
+enum IncidentStatus {
+  open
+  contained
+  closed
+}
+
+enum AuditOrigin {
+  deterministic
+  ai
+  user
+}
+
+model User {
+  id                  String                  @id @default(cuid())
+  email               String                  @unique
+  name                String
+  passwordHash        String
+  role                UserRole                @default(analyst)
+  active              Boolean                 @default(true)
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+  assessments         ComplianceAssessment[]
+  remediationCreated  RemediationRequest[]    @relation("RemediationCreator")
+  remediationReviewed RemediationRequest[]    @relation("RemediationReviewer")
+  audits              AuditLog[]
+  auditCheckpoints    AuditMerkleCheckpoint[]
+}
+
+model Contact {
+  id                    String                     @id @default(cuid())
+  externalId            String?                    @unique
+  name                  String
+  email                 String                     @unique
+  phone                 String?
+  department            String
+  noticeDeliveredAt     DateTime?
+  retentionEndsAt       DateTime?
+  minimizationCompliant Boolean                    @default(false)
+  createdAt             DateTime                   @default(now())
+  updatedAt             DateTime                   @updatedAt
+  consents              ConsentRecord[]
+  purposes              ProcessingPurpose[]
+  assessments           ComplianceAssessment[]
+  recommendations       ComplianceRecommendation[]
+  rightsRequests        RightsRequest[]
+  remediationTargets    RemediationTarget[]
+  blastRadiusSources    BlastRadiusLink[]          @relation("BlastRadiusSource")
+  blastRadiusRelated    BlastRadiusLink[]          @relation("BlastRadiusRelated")
+
+  @@index([department])
+  @@index([name])
+  @@index([retentionEndsAt])
+}
+
+model ConsentRecord {
+  id          String    @id @default(cuid())
+  contactId   String
+  purpose     String
+  active      Boolean   @default(true)
+  grantedAt   DateTime
+  expiresAt   DateTime?
+  withdrawnAt DateTime?
+  source      String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  contact     Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@index([contactId, active, expiresAt])
+}
+
+model ProcessingPurpose {
+  id            String    @id @default(cuid())
+  contactId     String
+  name          String
+  lawfulBasis   String?
+  active        Boolean   @default(true)
+  recordedAt    DateTime  @default(now())
+  deactivatedAt DateTime?
+  contact       Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@index([contactId, active])
+}
+
+model ComplianceRule {
+  id        String                  @id @default(cuid())
+  code      String                  @unique
+  control   String
+  severity  Severity
+  deduction Int
+  active    Boolean                 @default(true)
+  createdAt DateTime                @default(now())
+  versions  ComplianceRuleVersion[]
+}
+
+model ComplianceRuleVersion {
+  id             String         @id @default(cuid())
+  ruleId         String
+  version        Int
+  legalReference String
+  description    String
+  effectiveFrom  DateTime
+  effectiveTo    DateTime?
+  createdAt      DateTime       @default(now())
+  rule           ComplianceRule @relation(fields: [ruleId], references: [id], onDelete: Restrict)
+
+  @@unique([ruleId, version])
+  @@index([ruleId, effectiveFrom])
+}
+
+/// APPEND-ONLY at the application layer. Assessment runs always INSERT a new row.
+model ComplianceAssessment {
+  id           String             @id @default(cuid())
+  contactId    String
+  score        Int
+  bandStatus   AssessmentStatus
+  finalStatus  AssessmentStatus
+  assessedAt   DateTime           @default(now())
+  assessedById String?
+  contact      Contact            @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  assessedBy   User?              @relation(fields: [assessedById], references: [id], onDelete: SetNull)
+  results      ComplianceResult[]
+
+  @@index([contactId, assessedAt(sort: Desc)])
+  @@index([finalStatus, assessedAt(sort: Desc)])
+}
+
+model ComplianceResult {
+  id                  String               @id @default(cuid())
+  assessmentId        String
+  ruleCode            String
+  ruleVersion         Int
+  severity            Severity
+  passed              Boolean
+  reasonCode          String
+  evidenceExplanation String
+  legalReference      String
+  deduction           Int
+  createdAt           DateTime             @default(now())
+  assessment          ComplianceAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  @@unique([assessmentId, ruleCode])
+  @@index([ruleCode, passed])
+}
+
+model ComplianceRecommendation {
+  id              String               @id @default(cuid())
+  contactId       String
+  assessmentId    String
+  ruleCode        String
+  remediationType String
+  message         String
+  status          RecommendationStatus @default(open)
+  createdAt       DateTime             @default(now())
+  resolvedAt      DateTime?
+  contact         Contact              @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@index([contactId, status])
+  @@index([assessmentId])
+}
+
+model BlastRadiusLink {
+  id               String   @id @default(cuid())
+  sourceContactId  String
+  relatedContactId String
+  relationship     String
+  createdAt        DateTime @default(now())
+  sourceContact    Contact  @relation("BlastRadiusSource", fields: [sourceContactId], references: [id], onDelete: Cascade)
+  relatedContact   Contact  @relation("BlastRadiusRelated", fields: [relatedContactId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceContactId, relatedContactId, relationship])
+  @@index([relatedContactId])
+}
+
+model RightsRequest {
+  id          String            @id @default(cuid())
+  contactId   String
+  type        RightsRequestType
+  status      RequestStatus     @default(open)
+  details     String?
+  createdAt   DateTime          @default(now())
+  dueAt       DateTime
+  completedAt DateTime?
+  contact     Contact           @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@index([status, dueAt])
+  @@index([contactId])
+}
+
+model IncidentLog {
+  id                        String         @id @default(cuid())
+  occurredAt                DateTime
+  description               String
+  affectedContactCount      Int
+  status                    IncidentStatus @default(open)
+  boardNotifiedAt           DateTime?
+  affectedPersonsNotifiedAt DateTime?
+  createdAt                 DateTime       @default(now())
+  updatedAt                 DateTime       @updatedAt
+
+  @@index([status, occurredAt])
+}
+
+model RemediationRequest {
+  id              String              @id @default(cuid())
+  type            String
+  status          RemediationStatus   @default(pending_approval)
+  draftMessage    String
+  createdById     String
+  reviewerId      String?
+  createdAt       DateTime            @default(now())
+  approvedAt      DateTime?
+  rejectedAt      DateTime?
+  appliedAt       DateTime?
+  rejectionReason String?
+  createdBy       User                @relation("RemediationCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  reviewer        User?               @relation("RemediationReviewer", fields: [reviewerId], references: [id], onDelete: SetNull)
+  targets         RemediationTarget[]
+
+  @@index([status, createdAt])
+}
+
+model RemediationTarget {
+  id                   String             @id @default(cuid())
+  remediationRequestId String
+  contactId            String
+  remediationRequest   RemediationRequest @relation(fields: [remediationRequestId], references: [id], onDelete: Cascade)
+  contact              Contact            @relation(fields: [contactId], references: [id], onDelete: Restrict)
+
+  @@unique([remediationRequestId, contactId])
+  @@index([contactId])
+}
+
+model OrganizationSettings {
+  id                 String   @id @default("default")
+  organizationName   String
+  sdfMode            Boolean  @default(false)
+  accessSlaHours     Int      @default(720)
+  correctionSlaHours Int      @default(720)
+  erasureSlaHours    Int      @default(720)
+  grievanceSlaHours  Int      @default(168)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+/// Append-only at the application layer. DB triggers/WORM storage are a Phase 2 hardening item.
+model AuditLog {
+  id            String      @id @default(cuid())
+  actorId       String?
+  action        String
+  entityType    String
+  entityId      String?
+  origin        AuditOrigin @default(user)
+  metadata      Json
+  createdAt     DateTime    @default(now())
+  sequence      BigInt?     @unique
+  previousHash  String?
+  entryHash     String?
+  hashAlgorithm String?     @default("SHA-256")
+  actor         User?       @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId, createdAt(sort: Desc)])
+  @@index([actorId, createdAt(sort: Desc)])
+  @@index([origin, createdAt(sort: Desc)])
+  @@index([sequence(sort: Asc)])
+}
+
+/// A persisted tamper-evident snapshot. External anchoring/WORM storage is still required for physical immutability.
+model AuditMerkleCheckpoint {
+  id            String   @id @default(cuid())
+  rootHash      String
+  leafCount     Int
+  firstSequence BigInt
+  lastSequence  BigInt
+  algorithm     String   @default("SHA-256")
+  createdAt     DateTime @default(now())
+  createdById   String
+  createdBy     User     @relation(fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@unique([rootHash, leafCount])
+  @@index([createdAt(sort: Desc)])
+}

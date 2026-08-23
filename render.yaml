@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: complylens
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    preDeployCommand: npm run db:deploy
+    initialDeployHook: npm run db:seed
+    startCommand: npm start
+    healthCheckPath: /login
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: complylens-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MISTRAL_API_KEY
+        sync: false
+      - key: NODE_VERSION
+        value: 22.14.0
+
+databases:
+  - name: complylens-db
+    databaseName: complylens
+    user: complylens
+    plan: free

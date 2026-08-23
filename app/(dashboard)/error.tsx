@@ -1,0 +1,2 @@
+"use client";
+export default function DashboardError({reset}:{error:Error&{digest?:string};reset:()=>void}){return <main className="main"><p className="eyebrow">Unable to load</p><h1>Persisted data is temporarily unavailable.</h1><p className="lede">No verdicts or compliance state were changed. Retry when the database connection is available.</p><button className="btn" onClick={reset}>Try again</button></main>}

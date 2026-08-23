@@ -1,14 +1,43 @@
-# ComplyLens — four-slide pitch deck prompts
+# ComplyLens — restrained four-slide deck brief
 
-Use a 16:9 presentation with an executive Indian-regtech visual system: warm off-white background, deep teal (`#0C6B58`), emerald accents, charcoal text, restrained amber for risk, thin grid lines, and clean sans-serif typography. Avoid cartoons, mascots, glassmorphism, exaggerated claims, stock-padlock imagery, and dense paragraphs. Use diagrams, product screenshots, and large evidence-backed numbers. Add a small source footer on every slide. Team name: **Cloud Code**. Project name: **ComplyLens**.
+These are layout instructions, not invitations to invent content. Preserve the supplied copy and statistics exactly.
 
-Replace `[DEPLOYED_URL]` after deployment. Generate both QR codes as real, scannable codes with a white quiet zone and test them before presenting.
+## Non-negotiable visual direction
 
-## Slide 1 — problem and opportunity
+- Make the deck look manually designed by a strong product team, not generated from a presentation template.
+- Use a plain warm-white background, near-black text, and one deep-teal accent (`#0C6B58`). Amber is allowed only for risk.
+- Use one sans-serif family such as Inter, Aptos, Helvetica, or Neue Haas Grotesk. Use weight and size for hierarchy—not multiple fonts.
+- Use a 12-column grid, generous empty space, thin rules, square or lightly rounded corners, and consistent left alignment.
+- Use real ComplyLens screenshots and a precise architecture diagram. Do not generate illustrations.
+- Do not use gradients, glowing elements, abstract blobs, glassmorphism, 3D icons, stock photos, fake device mockups, decorative circuits, floating cards, or excessive pills.
+- Do not put every sentence inside a box. Avoid symmetrical three-card layouts unless the content genuinely requires comparison.
+- Keep titles at 32–38 pt, body copy at 17–20 pt, and source notes at 10–11 pt. Maximum 45–55 words of body copy per slide, excluding labels and sources.
+- Use subtle page numbers `01—04` in the bottom-right corner.
+- Team: **Cloud Code**. Product: **ComplyLens**.
 
-**Prompt**
+## Slide 1 — Problem Statement + facts and figures
 
-> Create slide 1 titled “ComplyLens” with the team label “CLOUD CODE” above it and the subtitle “Evidence-led DPDP compliance operations.” Present the problem in one sentence: “DPDP evidence is fragmented across systems, assessments are difficult to reproduce, and remediation decisions often lack a verifiable human approval trail.” Use three large statistical tiles: “969.10M internet subscribers in India — March 2025,” “29.44 lakh cyber-security incidents tracked in 2025,” and “Up to ₹250 crore statutory penalty for failure to take reasonable security safeguards.” Add a compact flow showing the operational gap: scattered evidence → manual interpretation → inconsistent remediation → weak auditability. End with the solution thesis: “Deterministic rules decide. AI explains. Humans approve. Cryptographic verification proves the trail.” Keep the statutory figure clearly labelled as a maximum, not predicted liability. Add source footnotes linking to TRAI’s 2024–25 performance indicators, the March 2026 PIB/CERT-In incident release, and the official DPDP Act 2023 Schedule.
+### Exact content
+
+**CLOUD CODE / COMPLYLENS**
+
+**Problem Statement**
+
+> Indian organisations process personal data across consent, purpose, retention, notice and service systems, but compliance teams lack a single operational layer that converts this evidence into reproducible DPDP assessments, prioritised remediation and a verifiable human approval trail.
+
+**Facts and figures**
+
+- **969.10M** internet subscribers in India, March 2025 — TRAI
+- **29.44 lakh** cyber-security incidents tracked in 2025 — CERT-In/PIB
+- **₹250 crore** statutory maximum for failure to take reasonable security safeguards — DPDP Act Schedule
+
+**Thesis**
+
+> Deterministic rules decide. AI explains. Humans approve.
+
+### Layout instruction
+
+> Design a restrained 16:9 opening slide. Put “CLOUD CODE / COMPLYLENS” as a small uppercase label at top-left. Use the left 58% for the “Problem Statement” heading and the exact statement above, set large and editorially. Use the right 34% for the three facts as large numbers separated only by thin horizontal rules—do not use cards, icons, circles or illustrations. Put the thesis as a single teal line near the bottom-left. Add a quiet source footer. Make “Problem Statement” explicit; do not replace it with a marketing slogan. Add a small note below 29.44 lakh saying “Cyber-security incidents, not personal-data breaches,” and below ₹250 crore saying “Statutory maximum; not predicted liability.”
 
 Sources:
 
@@ -16,44 +45,86 @@ Sources:
 - PIB/CERT-In: https://www.pib.gov.in/PressReleasePage.aspx?PRID=2244504&lang=1&reg=3
 - DPDP Act: https://www.meity.gov.in/static/uploads/2024/06/2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf
 
-## Slide 2 — architecture
+## Slide 2 — System architecture
 
-**Prompt**
+### Exact content
 
-> Create slide 2 titled “Architecture: deterministic core, governed intelligence.” Draw a left-to-right architecture diagram with five layers. Layer 1, Evidence: contacts, consent records, processing purposes, retention dates, notices, and minimization status. Layer 2, Application: responsive Next.js UI and authenticated API routes with signed HTTP-only sessions and Zod validation. Layer 3, Decision Core: versioned deterministic DPDP rules calculate score, status, severity gates, findings, and recommendations. Layer 4, Governance: non-mutating scenario analysis; Mistral receives only minimized persisted verdict metadata and returns a structured explanation; remediation requires DPO approval before evidence changes and reassessment. Layer 5, Assurance: PostgreSQL/Prisma stores append-only assessments and results; audit events are SHA-256 hash-chained, sealed into Merkle checkpoints, and exported as JSON proofs or board CSV. Use a bold boundary around the deterministic decision core. Place AI outside that boundary with a one-way “explain only” arrow. Show the closed remediation loop from finding → request → DPO approve/reject → apply → reassess → new history point. Use accurate technical icons and no decorative cloud clip art.
+**Architecture — the decision boundary is explicit**
 
-Suggested diagram syntax for tools that accept Mermaid:
+Evidence → authenticated application → deterministic rule engine → persisted assessment → human-approved remediation
+
+AI reads only minimized persisted verdict metadata and produces structured explanations. It cannot score, change status or write compliance results.
+
+### Layout instruction
+
+> Design a technical architecture slide that resembles an engineering design review, not an infographic. Use one full-width left-to-right diagram on a faint grid. Begin with evidence sources: Consent, Purpose, Retention, Notice and Minimization. Connect them to Next.js authenticated APIs, then to a bold outlined “Deterministic Rule Engine” boundary, then PostgreSQL/Prisma append-only assessments. From persisted assessments branch upward to dashboards and downward to SHA-256 hash chain, Merkle checkpoints, CSV and JSON proof exports. Place Mistral above and outside the decision boundary with a one-way dashed arrow labelled “Explain persisted verdict only.” Show one clean feedback loop: Finding → Remediation request → DPO approve/reject → Apply → Reassess. Use square nodes, thin orthogonal connectors and small technical labels. No cloud clip art, 3D database cylinders, decorative shields or glowing AI icons.
 
 ```mermaid
 flowchart LR
-  E[Evidence records] --> API[Next.js authenticated API]
-  API --> R[Versioned deterministic rule engine]
-  R --> DB[(PostgreSQL / Prisma)]
-  DB --> UI[Dashboard, contacts, DPO operations]
-  DB --> AI[Mistral structured explanation]
-  AI --> UI
-  UI --> SIM[Non-mutating scenario analysis]
+  E[Consent · Purpose · Retention · Notice · Minimization] --> API[Authenticated Next.js APIs]
+  API --> RULES[Deterministic, versioned rule engine]
+  RULES --> DB[(PostgreSQL · Prisma)]
+  DB --> UI[Dashboard · Contact evidence · DPO review]
+  DB -. minimized persisted verdict .-> AI[Mistral explanation only]
+  AI -. structured briefing .-> UI
   UI --> REQ[Remediation request]
-  REQ --> DPO{Human DPO review}
-  DPO -->|Approve| APPLY[Apply evidence change]
-  DPO -->|Reject| UI
-  APPLY --> R
-  API --> AUDIT[SHA-256 chain + Merkle checkpoints]
-  AUDIT --> PROOF[JSON proof + CSV artifact]
+  REQ --> DPO{Human approve / reject}
+  DPO -->|approved| APPLY[Apply evidence change]
+  APPLY --> RULES
+  API --> AUDIT[SHA-256 chain · Merkle checkpoint]
+  AUDIT --> ARTIFACTS[CSV · JSON proof]
 ```
 
-## Slide 3 — scale and production roadmap
+## Slide 3 — Scaling plan
 
-**Prompt**
+### Exact content
 
-> Create slide 3 titled “Scale with control, not complexity.” Use a three-stage roadmap: Pilot (10K records), Enterprise (1M records), and Ecosystem (100M+ records). Under Pilot show the current stack: stateless Next.js service, managed PostgreSQL, versioned rules, role-based human approval, and structured AI explanations. Under Enterprise show horizontal web scaling, database connection pooling, background assessment queues, partitioned assessment/audit tables, cached portfolio analytics, SSO/RBAC, tenant isolation, rate limiting, observability, backups, and disaster recovery. Under Ecosystem show regional deployment in India, rule-pack version governance, event-stream ingestion, read replicas/warehouse analytics, external Merkle-root anchoring or WORM storage, automated evidence connectors, and policy-as-code release approvals. Add four cross-cutting guardrails along the bottom: data minimization, encryption and key rotation, data residency/vendor review, and legal validation of rule mappings. Show that AI scales independently and remains outside scoring and write paths. Avoid claiming blockchain or absolute immutability.
+**Scale the workload without weakening governance**
 
-## Slide 4 — working artifacts and call to action
+| Layer | Current product | Production scale |
+|---|---|---|
+| Application | Stateless Next.js | Horizontal replicas + background assessment workers |
+| Data | Indexed PostgreSQL | Pooling, partitioned history, read replicas and backups |
+| Governance | Human approval | SSO, RBAC, tenant isolation and policy release controls |
+| Integrity | Internal Merkle checkpoints | External root anchoring or WORM retention |
+| Intelligence | Read-only Mistral briefing | Independently scaled, rate-limited and region-reviewed |
 
-**Prompt**
+### Layout instruction
 
-> Create slide 4 titled “Working product, verifiable artifacts.” Use two columns. Left column: a polished product screenshot montage showing remediation impact analysis, assessment history, structured AI briefing, DPO remediation approval, breach/rights operations, and audit integrity verification. Add concise artifact chips: “32 automated tests,” “strict TypeScript,” “production build verified,” “browser journey verified,” “board CSV export,” and “Merkle proof JSON.” Right column: two large, independently scannable QR cards. Card 1 label “Source code” with URL `https://github.com/nischala755/salesforce`. Card 2 label “Live demo” with URL `[DEPLOYED_URL]`. Add a smaller text line beneath each QR with the full URL. Finish with: “From fragmented evidence to reproducible decisions and human-approved remediation.” Include a small footer: “Operational aid; not legal certification or legal advice.” Do not place passwords or API keys on the slide.
+> Design this as a sober operating-model slide. Use a two-column comparison table occupying roughly 70% of the slide: “Current product” and “Production scale,” with the five supplied rows. Do not use a three-stage roadmap, maturity staircase or clusters of feature cards. In the remaining right margin, place three short scale markers vertically: 10K records—single service; 1M—workers and partitioning; 100M+—regional services and warehouse analytics. Add a thin bottom band labelled “Guardrails across every stage” with data minimization, encryption/key rotation, observability, data-residency review and legal validation. Keep AI outside scoring and write paths. Do not claim blockchain or absolute immutability.
 
-## Final deck QA prompt
+## Slide 4 — Evidence and access
 
-> Audit the four slides for factual accuracy, professional tone, consistent terminology, readable 16:9 layout, and scannable QR codes. Ensure “Remediation impact analysis,” “Compliance assessment history,” “Remediation scenario analysis,” and “Audit integrity verification” are used consistently. Remove playful terms such as radar, time machine, command center, magic, fingerprint, or immutable blockchain. Confirm that cyber-security incidents are not described as personal-data breaches and that ₹250 crore is described only as a statutory maximum for the specified Schedule item, not as likely liability.
+### Exact content
+
+**A working product, not a concept deck**
+
+- Deterministic five-control assessment
+- Human-approved remediation across all five controls
+- Structured AI explanation with graceful fallback
+- Assessment history and portfolio remediation impact
+- Breach, rights and DPO operations
+- SHA-256 chain, Merkle checkpoint, CSV and JSON proof artifacts
+- 32 automated tests + production/browser verification
+
+Source: `https://github.com/nischala755/salesforce`
+
+Live: `[DEPLOYED_URL]`
+
+### Layout instruction
+
+> Design the final slide around one large, real ComplyLens screenshot covering the left two-thirds—use the actual interface without putting it inside a fake laptop or browser mockup. Place the exact artifact list as simple text on the right, using checkmarks sparingly and no badges. At bottom-right place two small but genuinely scannable QR codes in a single row: GitHub and Live Demo. Print the full URL below each QR. Use `https://github.com/nischala755/salesforce` for GitHub and `[DEPLOYED_URL]` for the live product. End with one quiet sentence: “From fragmented evidence to reproducible decisions and human-approved remediation.” Add “Operational aid—not legal certification or legal advice” in the source footer. Do not include credentials, passwords or API keys.
+
+## Final rejection checklist
+
+Reject and regenerate the deck if it contains any of the following:
+
+- generic AI artwork, people illustrations, robots, padlocks or circuit backgrounds;
+- gradients, neon glows, glass cards or abstract blobs;
+- more than one hero statement per slide;
+- invented statistics, customer claims, ROI figures or legal conclusions;
+- uniform rounded cards on every slide;
+- tiny unreadable text or paragraphs copied into diagrams;
+- a QR code that is decorative rather than scannable;
+- cyber-security incidents described as personal-data breaches;
+- ₹250 crore described as expected or predicted liability.

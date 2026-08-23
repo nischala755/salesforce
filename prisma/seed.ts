@@ -21,8 +21,8 @@ async function main() {
   const adminHash = await bcrypt.hash("DemoAdmin!2026", 12);
   const reviewerHash = await bcrypt.hash("DemoReviewer!2026", 12);
   const [admin] = await Promise.all([
-    prisma.user.upsert({ where: { email: "admin@complylens.demo" }, update: { passwordHash: adminHash, active: true }, create: { email: "admin@complylens.demo", name: "Demo Administrator", passwordHash: adminHash, role: UserRole.admin } }),
-    prisma.user.upsert({ where: { email: "reviewer@complylens.demo" }, update: { passwordHash: reviewerHash, active: true }, create: { email: "reviewer@complylens.demo", name: "Demo DPO Reviewer", passwordHash: reviewerHash, role: UserRole.dpo } }),
+    prisma.user.upsert({ where: { email: "admin@complylens.demo" }, update: { active: true }, create: { email: "admin@complylens.demo", name: "Demo Administrator", passwordHash: adminHash, role: UserRole.admin } }),
+    prisma.user.upsert({ where: { email: "reviewer@complylens.demo" }, update: { active: true }, create: { email: "reviewer@complylens.demo", name: "Demo DPO Reviewer", passwordHash: reviewerHash, role: UserRole.dpo } }),
   ]);
 
   await prisma.organizationSettings.upsert({

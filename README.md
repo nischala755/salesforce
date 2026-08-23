@@ -46,15 +46,15 @@ The browser smoke test uses installed Chrome against a running production server
 
 ## Render deployment
 
-The included `render.yaml` defines a Next.js web service and PostgreSQL database. It generates `JWT_SECRET`, prompts for `MISTRAL_API_KEY`, runs `prisma migrate deploy` before releases, and seeds the demonstration dataset only on the initial deployment.
+The included `render.yaml` defines a free-tier Next.js web service and PostgreSQL database. It generates `JWT_SECRET`, prompts for `MISTRAL_API_KEY`, and runs the idempotent migration/demo-bootstrap steps as part of the build because Render does not support pre-deploy commands on free web services. Existing user passwords and operational records are not overwritten on later deploys.
 
 1. In Render, select **New → Blueprint** and connect this repository.
 2. Confirm Render detects `render.yaml`.
 3. Enter `MISTRAL_API_KEY` when prompted. Never expose it through a `NEXT_PUBLIC_` variable.
-4. Create the Blueprint and wait for the database migration, initial seed, and web-service health check.
+4. Create the Blueprint and wait for the database migration, idempotent demo bootstrap, production build, and web-service health check.
 5. Open the generated `https://complylens-....onrender.com/login` URL and rotate or remove the seeded demo credentials before using non-demo data.
 
-For a manual Render web service, use `npm ci && npm run build`, `npm run db:deploy` as the pre-deploy command, and `npm start` as the start command.
+For a manual free-tier Render web service, use `npm ci && npm run db:deploy && npm run db:seed && npm run build` as the build command and `npm start` as the start command. On a paid service, move `npm run db:deploy` to Render's pre-deploy command and run the demo seed only when intentionally bootstrapping a new environment.
 
 ## Vercel deployment
 

@@ -2,6 +2,12 @@ import { chromium } from "playwright-core";
 import { PrismaClient } from "@prisma/client";
 
 const baseURL = process.env.SMOKE_BASE_URL || "http://127.0.0.1:3000";
+const adminPassword = process.env.DEMO_ADMIN_PASSWORD;
+
+if (!adminPassword) {
+  throw new Error("DEMO_ADMIN_PASSWORD must be set before running the browser smoke test.");
+}
+
 const browser = await chromium.launch({ headless: true, executablePath: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" });
 const page = await browser.newPage({ viewport: { width: 1365, height: 900 } });
 const prisma = new PrismaClient();
@@ -19,7 +25,7 @@ try {
   await page.getByLabel("Password").fill("incorrect-password");
   await page.getByRole("button", { name: "Sign in securely" }).click();
   await page.getByRole("alert").waitFor();
-  await page.getByLabel("Password").fill("DemoAdmin!2026");
+  await page.getByLabel("Password").fill(adminPassword);
   await page.getByRole("button", { name: "Sign in securely" }).click();
   await page.waitForURL("**/dashboard");
   assert(await page.getByText("Evidence, verdicts,").isVisible(), "Dashboard did not render after login.");

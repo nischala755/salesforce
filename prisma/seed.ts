@@ -18,11 +18,18 @@ const lastNames = ["Agarwal", "Bose", "Chandra", "Desai", "Gupta", "Iyer", "Jain
 const departments = ["Sales", "Support", "Finance", "Marketing", "Operations", "People"];
 
 async function main() {
-  const adminHash = await bcrypt.hash("DemoAdmin!2026", 12);
-  const reviewerHash = await bcrypt.hash("DemoReviewer!2026", 12);
+  const adminPassword = process.env.DEMO_ADMIN_PASSWORD;
+  const reviewerPassword = process.env.DEMO_REVIEWER_PASSWORD;
+
+  if (!adminPassword || !reviewerPassword) {
+    throw new Error("DEMO_ADMIN_PASSWORD and DEMO_REVIEWER_PASSWORD must be set before seeding.");
+  }
+
+  const adminHash = await bcrypt.hash(adminPassword, 12);
+  const reviewerHash = await bcrypt.hash(reviewerPassword, 12);
   const [admin] = await Promise.all([
-    prisma.user.upsert({ where: { email: "admin@complylens.demo" }, update: { active: true }, create: { email: "admin@complylens.demo", name: "Demo Administrator", passwordHash: adminHash, role: UserRole.admin } }),
-    prisma.user.upsert({ where: { email: "reviewer@complylens.demo" }, update: { active: true }, create: { email: "reviewer@complylens.demo", name: "Demo DPO Reviewer", passwordHash: reviewerHash, role: UserRole.dpo } }),
+    prisma.user.upsert({ where: { email: "admin@complylens.demo" }, update: { active: true, passwordHash: adminHash }, create: { email: "admin@complylens.demo", name: "Demo Administrator", passwordHash: adminHash, role: UserRole.admin } }),
+    prisma.user.upsert({ where: { email: "reviewer@complylens.demo" }, update: { active: true, passwordHash: reviewerHash }, create: { email: "reviewer@complylens.demo", name: "Demo DPO Reviewer", passwordHash: reviewerHash, role: UserRole.dpo } }),
   ]);
 
   await prisma.organizationSettings.upsert({
@@ -101,9 +108,7 @@ async function main() {
     }
   }
 
-  console.info("Seeded 2 DEMO users and 40 DEMO contacts. Rotate demo passwords before any real deployment.");
-  console.info("DEMO admin: admin@complylens.demo / DemoAdmin!2026");
-  console.info("DEMO reviewer: reviewer@complylens.demo / DemoReviewer!2026");
+  console.info("Seeded 2 DEMO users and 40 DEMO contacts using environment-managed passwords.");
 }
 
 main().finally(async () => prisma.$disconnect());

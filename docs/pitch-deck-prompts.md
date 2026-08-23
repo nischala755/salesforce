@@ -109,11 +109,11 @@ flowchart LR
 
 Source: `https://github.com/nischala755/salesforce`
 
-Live: `[DEPLOYED_URL]`
+Live: `https://complylens.onrender.com/login`
 
 ### Layout instruction
 
-> Design the final slide around one large, real ComplyLens screenshot covering the left two-thirds—use the actual interface without putting it inside a fake laptop or browser mockup. Place the exact artifact list as simple text on the right, using checkmarks sparingly and no badges. At bottom-right place two small but genuinely scannable QR codes in a single row: GitHub and Live Demo. Print the full URL below each QR. Use `https://github.com/nischala755/salesforce` for GitHub and `[DEPLOYED_URL]` for the live product. End with one quiet sentence: “From fragmented evidence to reproducible decisions and human-approved remediation.” Add “Operational aid—not legal certification or legal advice” in the source footer. Do not include credentials, passwords or API keys.
+> Design the final slide like an editorial product proof page, not an AI-generated pitch slide. Use one large, real ComplyLens dashboard screenshot across the left 64% of the canvas, cropped cleanly with no laptop, browser, phone, perspective mockup, glow, gradient or floating card. In the right column, set the seven supplied artifacts as compact black text separated by thin rules; use no icons, badges or invented claims. Along the bottom, place the supplied high-resolution QR files side by side: `public/complylens-github-qr.png` labelled “SOURCE” and `public/complylens-live-qr.png` labelled “LIVE PRODUCT”. Keep each QR at least 3 cm wide with a clear white quiet zone, and print its full URL directly below it: `https://github.com/nischala755/salesforce` and `https://complylens.onrender.com/login`. End with the quiet sentence “From fragmented evidence to reproducible decisions and human-approved remediation.” Add “Operational aid—not legal certification or legal advice” in a small source footer. Use an off-white background, near-black text, one deep teal accent, left alignment, generous whitespace and a single restrained sans-serif family. Do not include credentials, passwords or API keys.
 
 ## Final rejection checklist
 

@@ -3,9 +3,10 @@ import { PrismaClient } from "@prisma/client";
 
 const baseURL = process.env.SMOKE_BASE_URL || "http://127.0.0.1:3000";
 const adminPassword = process.env.DEMO_ADMIN_PASSWORD;
+const reviewerPassword = process.env.DEMO_REVIEWER_PASSWORD;
 
-if (!adminPassword) {
-  throw new Error("DEMO_ADMIN_PASSWORD must be set before running the browser smoke test.");
+if (!adminPassword || !reviewerPassword) {
+  throw new Error("DEMO_ADMIN_PASSWORD and DEMO_REVIEWER_PASSWORD must be set before running the browser smoke test.");
 }
 
 const browser = await chromium.launch({ headless: true, executablePath: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe" });
@@ -28,7 +29,8 @@ try {
   await page.getByLabel("Password").fill(adminPassword);
   await page.getByRole("button", { name: "Sign in securely" }).click();
   await page.waitForURL("**/dashboard");
-  assert(await page.getByText("Evidence, verdicts,").isVisible(), "Dashboard did not render after login.");
+  await page.getByText("Evidence, verdicts,").waitFor();
+  assert(await page.getByText("How evidence becomes a reproducible verdict").isVisible(), "Rule-engine explanation did not render.");
   assert(await page.getByText("Remediation impact analysis").isVisible(), "Remediation impact analysis did not render.");
   consoleErrors.length = 0; // The intentional failed-login 401 above is expected and already asserted in the UI.
 
@@ -48,7 +50,31 @@ try {
   const coreAfterSimulation = await Promise.all([prisma.contact.count(), prisma.complianceAssessment.count(), prisma.complianceResult.count()]);
   assert(JSON.stringify(coreAfterSimulation) === JSON.stringify(coreBeforeSimulation), "Simulation mutated Contact, ComplianceAssessment, or ComplianceResult rows.");
   await page.getByRole("button", { name: "Request remediation" }).click();
-  await page.getByText(/submitted for human approval/).waitFor();
+  await page.getByText(/submitted for independent DPO approval/).waitFor();
+
+  const purposeRequest = await prisma.remediationRequest.findFirstOrThrow({
+    where: { type: "purpose_registration", status: "pending_approval" },
+    orderBy: { createdAt: "desc" },
+  });
+  const forbiddenApprovalStatus = await page.evaluate(async (requestId) => {
+    const response = await fetch(`/api/remediation/${requestId}/approve`, { method: "POST" });
+    return response.status;
+  }, purposeRequest.id);
+  assert(forbiddenApprovalStatus === 403, `Operational administrator approval returned ${forbiddenApprovalStatus}, expected 403.`);
+  consoleErrors.length = 0; // The intentional role-separation 403 is expected and asserted above.
+
+  const aditi = await prisma.contact.findUniqueOrThrow({ where: { email: "contact.02@example.in" } });
+  await page.goto(`${baseURL}/contacts/${aditi.id}`, { waitUntil: "networkidle" });
+  assert(await page.getByText(/The operator never grants consent for Aditi/).isVisible(), "The external consent handoff was not explained.");
+  await page.getByRole("button", { name: "Request remediation" }).click();
+  await page.getByText(/Consent email queued for the data principal/).waitFor();
+
+  await page.getByRole("button", { name: "Log out" }).click();
+  await page.waitForURL("**/login");
+  await page.getByLabel("Email").fill("reviewer@complylens.demo");
+  await page.getByLabel("Password").fill(reviewerPassword);
+  await page.getByRole("button", { name: "Sign in securely" }).click();
+  await page.waitForURL("**/dashboard");
 
   await page.goto(`${baseURL}/dpo`, { waitUntil: "networkidle" });
   await page.getByText("Audit integrity verification").waitFor();
@@ -59,9 +85,22 @@ try {
   const proofDownload=page.waitForEvent("download");
   await page.getByRole("button",{name:"Export proof bundle"}).click();
   assert((await proofDownload).suggestedFilename().endsWith(".json"),"Merkle proof bundle did not download.");
-  await page.getByRole("button", { name: "Approve" }).first().click();
-  await page.getByRole("button", { name: "Apply & reassess" }).first().waitFor();
-  await page.getByRole("button", { name: "Apply & reassess" }).first().click();
+  let purposeRow = page.locator("tr", { hasText: "purpose registration" }).first();
+  await purposeRow.getByRole("button", { name: "Approve" }).click();
+  purposeRow = page.locator("tr", { hasText: "purpose registration" }).first();
+  await purposeRow.getByRole("button", { name: "Apply & reassess" }).waitFor();
+  await purposeRow.getByRole("button", { name: "Apply & reassess" }).click();
+
+  let consentRow = page.locator("tr", { hasText: "consent renewal" }).first();
+  await consentRow.getByRole("button", { name: "Approve outreach" }).click();
+  consentRow = page.locator("tr", { hasText: "consent renewal" }).first();
+  await consentRow.getByRole("button", { name: "Sync verified consent & reassess" }).waitFor();
+  page.once("dialog", (dialog) => dialog.accept());
+  const consentSyncResponse = page.waitForResponse((response) => response.url().includes(`/api/remediation/`) && response.url().endsWith("/apply") && response.request().method() === "POST");
+  await consentRow.getByRole("button", { name: "Sync verified consent & reassess" }).click();
+  assert((await consentSyncResponse).ok(), "Verified consent response could not be synced.");
+  const syncedConsent = await prisma.consentRecord.findFirst({ where: { contactId: aditi.id, active: true }, orderBy: { grantedAt: "desc" } });
+  assert(syncedConsent?.source.includes("data-principal response") ?? false, "Consent was not attributed to the external data-principal response.");
   await page.getByText("Awaiting human action").waitFor();
 
   await page.goto(`${baseURL}/breach`, { waitUntil: "networkidle" });
@@ -110,7 +149,7 @@ try {
   await page.waitForURL("**/login**");
 
   assert(consoleErrors.length === 0, `Browser console errors: ${consoleErrors.join(" | ")}`);
-  console.info("Browser journeys A-F passed: login, bulk assess, investigate, simulate, purpose remediation/approval/apply, breach, rights request, AI fallback/explanation, CSV, integrity proof, and mobile layouts.");
+  console.info("Browser journeys A-F passed: admin investigation/request, Aditi external-consent sync, independent DPO approval/apply, breach, rights request, AI fallback/explanation, CSV, integrity proof, and mobile layouts.");
 } finally {
   await browser.close();
   await prisma.$disconnect();

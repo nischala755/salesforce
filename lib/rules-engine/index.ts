@@ -79,9 +79,9 @@ type Evaluation = Omit<RuleResult, "ruleVersion" | "severity" | "deduction" | "l
 export const REMEDIATION_BY_RULE: Record<RuleCode, RemediationDefinition> = {
   "DPDP-001": {
     type: "consent_renewal",
-    label: "Consent renewal",
-    draftMessage: "Renew the active consent record after the data principal reviews the current notice and records their choice.",
-    message: "Obtain or renew an active, non-expired consent record.",
+    label: "Consent outreach and evidence sync",
+    draftMessage: "Send the current notice and consent link to the data principal. Sync consent evidence only after the data principal records an affirmative choice in the external consent channel.",
+    message: "Request consent from the data principal and sync the verified response from the consent channel.",
   },
   "DPDP-002": {
     type: "purpose_registration",

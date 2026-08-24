@@ -15,6 +15,18 @@ The DPO view also includes audit integrity verification. New audit entries are c
 - Human-approved remediation for consent, purpose, retention, notice, and minimization findings.
 - Breach operations, data-principal rights requests, CSV reporting, SDF operational review, and tamper-evident audit verification.
 
+## Operating model and personas
+
+- **DPO / Privacy Operations Lead (primary):** reviews organization posture, independently approves remediation, monitors rights/retention pressure, coordinates privacy-specific breach obligations, and exports audit evidence.
+- **CRM or data steward:** investigates contact evidence and requests correction, but cannot approve their own remediation or grant consent for a data principal.
+- **Incident Response Lead:** records breach scope and operational milestones while the DPO oversees notification evidence.
+
+ComplyLens is an evidence and decision layer above existing CRM, consent-management, security, and ticketing systems—not a replacement for them. The demo represents connector handoffs locally. In production, minimized metadata is synchronized through adapters while source systems remain systems of record. Consent remediation sends the data principal to an external consent channel; ComplyLens records a consent only after that response is verified and synchronized.
+
+## Rule-engine extension model
+
+Evidence is normalized into five typed inputs, evaluated by deterministic controls, scored from 100 using versioned deductions, checked by a severity gate, and appended to assessment history with the exact rule version and legal mapping. AI can read the persisted verdict afterward but cannot participate in this pipeline. A new policy is added by mapping its evidence, implementing a typed evaluator/remediation definition, publishing a database-backed rule version, adding boundary tests, and activating it for future assessments. Historical verdicts retain their original versions.
+
 ## Local setup
 
 1. Copy `.env.example` to `.env.local` and provide `DATABASE_URL`, a random `JWT_SECRET` of at least 32 characters, `MISTRAL_API_KEY`, `DEMO_ADMIN_PASSWORD`, and `DEMO_REVIEWER_PASSWORD`.

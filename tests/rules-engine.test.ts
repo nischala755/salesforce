@@ -98,6 +98,13 @@ describe("assessContact", () => {
       expect(RULE_BY_REMEDIATION_TYPE[definition.type]).toBe(ruleCode);
     }
   });
+
+  it("treats consent as an external data-principal response, never an operator decision", () => {
+    const consent = REMEDIATION_BY_RULE["DPDP-001"];
+    expect(consent.draftMessage).toMatch(/data principal/i);
+    expect(consent.draftMessage).toMatch(/external consent channel/i);
+    expect(consent.message).toMatch(/sync the verified response/i);
+  });
 });
 
 describe("score band boundaries", () => {

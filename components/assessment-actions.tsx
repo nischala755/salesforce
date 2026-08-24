@@ -19,10 +19,12 @@ type Output =
 
 export function AssessmentActions({
   contactId,
+  contactName,
   assessmentId,
   failedRules,
 }: {
   contactId: string;
+  contactName: string;
   assessmentId: string;
   failedRules: RuleCode[];
 }) {
@@ -79,7 +81,9 @@ export function AssessmentActions({
     setOutput({
       kind: "message",
       text: response.ok
-        ? `${body.requests.length} remediation request${body.requests.length === 1 ? "" : "s"} submitted for human approval.`
+        ? selected.includes("DPDP-001")
+          ? `Consent email queued for the data principal and ${body.requests.length} remediation request${body.requests.length === 1 ? "" : "s"} submitted. No consent is recorded until their external response is independently verified and synced.`
+          : `${body.requests.length} remediation request${body.requests.length === 1 ? "" : "s"} submitted for independent DPO approval.`
         : body.error,
     });
     if (response.ok) router.refresh();
@@ -110,6 +114,21 @@ export function AssessmentActions({
           </label>
         ))}
       </div>
+      {failedRules.includes("DPDP-001") && (
+        <aside className="consent-handoff">
+          <div>
+            <span className="eyebrow">Consent handoff · demo connector</span>
+            <strong>The operator never grants consent for {contactName}; only the data principal can make that choice.</strong>
+          </div>
+          <ol>
+            <li><b>1</b><span>Send notice and consent link</span></li>
+            <li><b>2</b><span>Data principal chooses externally</span></li>
+            <li><b>3</b><span>DPO verifies the response</span></li>
+            <li><b>4</b><span>Sync evidence and reassess</span></li>
+          </ol>
+          <p>Production connects to the customer’s email and consent-management system; this demo represents that handoff without sending a real email.</p>
+        </aside>
+      )}
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
         <button className="btn" onClick={simulate} disabled={Boolean(busy) || !selected.length}>
           {busy === "sim" ? "Simulating…" : "Simulate selected"}

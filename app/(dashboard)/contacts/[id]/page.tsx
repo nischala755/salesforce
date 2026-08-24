@@ -87,6 +87,7 @@ export default async function ContactPage({ params }: { params: Promise<{ id: st
             <aside className="stack">
               <AssessmentActions
                 contactId={contact.id}
+                contactName={contact.name}
                 assessmentId={latest.id}
                 failedRules={latest.results
                   .filter((result) => !result.passed)

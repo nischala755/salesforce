@@ -2,8 +2,10 @@ import { prisma } from "@/lib/db";
 import { StatusBadge } from "@/components/status-badge";
 import { ApplyRemediation, RemediationReview, SdfToggle } from "@/components/dpo-actions";
 import { AuditProofGraph } from "@/components/audit-proof-graph";
+import { requirePageSession } from "@/lib/auth/session";
 
 export default async function DpoPage() {
+  const session = await requirePageSession();
   const [contacts, rights, settings, remediations] = await Promise.all([
     prisma.contact.findMany({
       include: { assessments: { orderBy: { assessedAt: "desc" }, take: 1 } },
@@ -18,7 +20,7 @@ export default async function DpoPage() {
     prisma.remediationRequest.findMany({
       where: { status: { in: ["pending_approval", "approved"] } },
       include: {
-        createdBy: { select: { name: true } },
+        createdBy: { select: { id: true, name: true } },
         targets: { include: { contact: { select: { name: true } } } },
       },
       orderBy: { createdAt: "asc" },
@@ -38,6 +40,12 @@ export default async function DpoPage() {
     <main className="main">
       <p className="eyebrow">Executive operations</p>
       <h1>DPO operations overview</h1>
+      <p className="lede">The independent control room for the DPO or Privacy Operations Lead—not a second CRM dashboard.</p>
+      <section className="context-grid" aria-label="Why DPO oversight is part of ComplyLens">
+        <article><span className="eyebrow">Primary persona</span><h2>DPO / Privacy Operations Lead</h2><p>Reviews exceptions across teams, challenges proposed fixes and owns the evidence presented to leadership or auditors.</p></article>
+        <article><span className="eyebrow">Why it is essential</span><h2>Assessment needs accountable action</h2><p>A score alone does not close a gap. This view enforces four-eyes approval, tracks rights and retention pressure, and verifies the audit trail.</p></article>
+        <article><span className="eyebrow">Existing-customer impact</span><h2>Governance above current workflows</h2><p>CRM stewards keep investigating in their existing systems. The DPO receives one review queue and exportable evidence without taking over operational ownership.</p></article>
+      </section>
       <div className="grid metrics">
         <div className="card">
           <span className="metric-label">Organization compliance</span>
@@ -69,7 +77,7 @@ export default async function DpoPage() {
       <AuditProofGraph />
 
       <div className="section-row">
-        <h2>Remediation approvals</h2>
+        <div><h2>Independent remediation review</h2><p className="muted">CRM and data stewards initiate corrections; a different DPO user approves and syncs verified evidence.</p></div>
       </div>
       <div className="table-wrap">
         <table>
@@ -87,7 +95,7 @@ export default async function DpoPage() {
               remediations.map((remediation) => (
                 <tr key={remediation.id}>
                   <td>{remediation.targets.map((target) => target.contact.name).join(", ")}</td>
-                  <td>{remediation.type.replaceAll("_", " ")}</td>
+                  <td>{remediation.type.replaceAll("_", " ")}<br/><span className="small muted">{remediation.draftMessage}</span></td>
                   <td>
                     <StatusBadge status={remediation.status === "approved" ? "compliant" : "at_risk"} />
                     <br />
@@ -95,10 +103,14 @@ export default async function DpoPage() {
                   </td>
                   <td>{remediation.createdBy.name}</td>
                   <td>
-                    {remediation.status === "pending_approval" ? (
-                      <RemediationReview id={remediation.id} />
+                    {session.role !== "dpo" ? (
+                      <span className="small muted">DPO reviewer login required</span>
+                    ) : remediation.status === "pending_approval" && remediation.createdBy.id === session.sub ? (
+                      <span className="small muted">A different DPO must review this request</span>
+                    ) : remediation.status === "pending_approval" ? (
+                      <RemediationReview id={remediation.id} consent={remediation.type === "consent_renewal"} />
                     ) : (
-                      <ApplyRemediation id={remediation.id} />
+                      <ApplyRemediation id={remediation.id} consent={remediation.type === "consent_renewal"} />
                     )}
                   </td>
                 </tr>

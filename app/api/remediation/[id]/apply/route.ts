@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireSession } from "@/lib/auth/session";
+import { requireDpoRole } from "@/lib/auth/authorization";
 import { apiError } from "@/lib/auth/errors";
 import { writeAudit } from "@/lib/audit";
 import { runAssessments } from "@/lib/assessments";
@@ -23,6 +24,7 @@ export async function POST(
 ) {
   try {
     const session = await requireSession();
+    requireDpoRole(session);
     const { id } = await context.params;
     const contactIds = await prisma.$transaction(async (tx) => {
       const item = await tx.remediationRequest.findUniqueOrThrow({
@@ -51,7 +53,7 @@ export async function POST(
               active: true,
               grantedAt: now,
               expiresAt: new Date(now.getTime() + 365 * 86_400_000),
-              source: `Approved remediation ${id}`,
+              source: `Verified data-principal response synced from demo consent connector; remediation ${id}`,
             })),
           });
           break;
@@ -98,7 +100,12 @@ export async function POST(
         entityType: "RemediationRequest",
         entityId: id,
         origin: "deterministic",
-        metadata: { contactIds: ids, ruleCode: RULE_BY_REMEDIATION_TYPE[type], type },
+        metadata: {
+          contactIds: ids,
+          ruleCode: RULE_BY_REMEDIATION_TYPE[type],
+          type,
+          evidenceSource: type === "consent_renewal" ? "data_principal_response" : "approved_internal_review",
+        },
       });
       return ids;
     });

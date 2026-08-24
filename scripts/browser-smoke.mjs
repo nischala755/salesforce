@@ -31,6 +31,21 @@ try {
   await page.waitForURL("**/dashboard");
   await page.getByText("Evidence, verdicts,").waitFor();
   assert(await page.getByText("How evidence becomes a reproducible verdict").isVisible(), "Rule-engine explanation did not render.");
+  const studio = page.locator(".rule-studio");
+  await studio.getByRole("heading", { name: "Rule Trace Studio" }).waitFor();
+  await page.waitForFunction(() => !document.querySelector(".fingerprint-band code")?.textContent?.includes("calculating"));
+  const aditiFingerprint = await studio.locator(".fingerprint-band code").textContent();
+  await studio.getByRole("button", { name: "Fully compliant" }).click();
+  await studio.getByRole("button", { name: "Execute changed evidence" }).click();
+  await studio.locator(".score-orb strong").getByText("100", { exact: true }).waitFor();
+  await page.waitForFunction((previous) => document.querySelector(".fingerprint-band code")?.textContent !== previous, aditiFingerprint);
+  const compliantFingerprint = await studio.locator(".fingerprint-band code").textContent();
+  assert(compliantFingerprint !== aditiFingerprint, "Changing evidence did not change the deterministic scenario fingerprint.");
+  await studio.getByRole("button", { name: "Replay identical evidence" }).click();
+  await studio.getByText("✓ IDENTICAL REPLAY CONFIRMED").waitFor();
+  assert(await studio.locator(".fingerprint-band code").textContent() === compliantFingerprint, "Identical evidence did not reproduce the same fingerprint.");
+  await studio.getByRole("button", { name: "Preview a future rule" }).click();
+  await studio.getByText("INACTIVE · ZERO SCORE IMPACT").waitFor();
   assert(await page.getByText("Remediation impact analysis").isVisible(), "Remediation impact analysis did not render.");
   consoleErrors.length = 0; // The intentional failed-login 401 above is expected and already asserted in the UI.
 
@@ -86,13 +101,25 @@ try {
   await page.getByRole("button",{name:"Export proof bundle"}).click();
   assert((await proofDownload).suggestedFilename().endsWith(".json"),"Merkle proof bundle did not download.");
   let purposeRow = page.locator("tr", { hasText: "purpose registration" }).first();
+  const purposeApprovalResponse = page.waitForResponse((response) => response.url().includes(`/api/remediation/${purposeRequest.id}/approve`) && response.request().method() === "POST");
   await purposeRow.getByRole("button", { name: "Approve" }).click();
+  assert((await purposeApprovalResponse).ok(), "Purpose remediation could not be independently approved.");
+  await page.reload({ waitUntil: "networkidle" });
   purposeRow = page.locator("tr", { hasText: "purpose registration" }).first();
   await purposeRow.getByRole("button", { name: "Apply & reassess" }).waitFor();
+  const purposeApplyResponse = page.waitForResponse((response) => response.url().includes(`/api/remediation/${purposeRequest.id}/apply`) && response.request().method() === "POST");
   await purposeRow.getByRole("button", { name: "Apply & reassess" }).click();
+  assert((await purposeApplyResponse).ok(), "Approved purpose remediation could not be applied.");
 
   let consentRow = page.locator("tr", { hasText: "consent renewal" }).first();
+  const consentRequest = await prisma.remediationRequest.findFirstOrThrow({
+    where: { type: "consent_renewal", status: "pending_approval" },
+    orderBy: { createdAt: "desc" },
+  });
+  const consentApprovalResponse = page.waitForResponse((response) => response.url().includes(`/api/remediation/${consentRequest.id}/approve`) && response.request().method() === "POST");
   await consentRow.getByRole("button", { name: "Approve outreach" }).click();
+  assert((await consentApprovalResponse).ok(), "Consent outreach could not be independently approved.");
+  await page.reload({ waitUntil: "networkidle" });
   consentRow = page.locator("tr", { hasText: "consent renewal" }).first();
   await consentRow.getByRole("button", { name: "Sync verified consent & reassess" }).waitFor();
   page.once("dialog", (dialog) => dialog.accept());
@@ -149,7 +176,7 @@ try {
   await page.waitForURL("**/login**");
 
   assert(consoleErrors.length === 0, `Browser console errors: ${consoleErrors.join(" | ")}`);
-  console.info("Browser journeys A-F passed: admin investigation/request, Aditi external-consent sync, independent DPO approval/apply, breach, rights request, AI fallback/explanation, CSV, integrity proof, and mobile layouts.");
+  console.info("Browser journeys A-F passed: interactive rule trace/replay, admin investigation/request, Aditi external-consent sync, independent DPO approval/apply, breach, rights request, AI fallback/explanation, CSV, integrity proof, and mobile layouts.");
 } finally {
   await browser.close();
   await prisma.$disconnect();

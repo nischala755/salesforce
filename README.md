@@ -9,6 +9,7 @@ The DPO view also includes audit integrity verification. New audit entries are c
 ## Core capabilities
 
 - Deterministic, versioned DPDP assessment rules with persisted evidence and results.
+- Interactive no-write Rule Trace Studio with live evidence toggles, per-control execution trace, reproducible scenario fingerprint, and inactive extension preview.
 - Remediation impact analysis across the assessed contact portfolio.
 - Assessment history with score, resolved-control, and regressed-control comparisons.
 - Read-only AI briefings generated from minimized persisted verdict metadata.

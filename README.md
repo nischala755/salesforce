@@ -12,13 +12,14 @@ The DPO view also includes audit integrity verification. New audit entries are c
 - Interactive no-write Rule Trace Studio with live evidence toggles, per-control execution trace, reproducible scenario fingerprint, and inactive extension preview.
 - Remediation impact analysis across the assessed contact portfolio.
 - Assessment history with score, resolved-control, and regressed-control comparisons.
-- Read-only AI briefings generated from minimized persisted verdict metadata.
+- Evidence-grounded AI briefings with rule-cited insights, owned actions, measurable success signals, and a deterministic fallback.
+- Reconciled recommendation register with one open action per contact and failed control.
 - Human-approved remediation for consent, purpose, retention, notice, and minimization findings.
-- Breach operations, data-principal rights requests, CSV reporting, SDF operational review, and tamper-evident audit verification.
+- Incident command cockpit with deadline visibility, notification evidence, guarded containment/closure, CSV reporting, SDF operational review, and tamper-evident audit verification.
 
 ## Operating model and personas
 
-- **DPO / Privacy Operations Lead (primary):** reviews organization posture, independently approves remediation, monitors rights/retention pressure, coordinates privacy-specific breach obligations, and exports audit evidence.
+- **DPO / Privacy Operations Lead (primary):** reviews organization posture, independently approves remediation, monitors retention pressure, coordinates privacy-specific breach obligations, and exports audit evidence.
 - **CRM or data steward:** investigates contact evidence and requests correction, but cannot approve their own remediation or grant consent for a data principal.
 - **Incident Response Lead:** records breach scope and operational milestones while the DPO oversees notification evidence.
 
@@ -55,7 +56,7 @@ npm run build
 npm run smoke:browser
 ```
 
-The browser smoke test uses installed Chrome against a running production server (`npm start`). It covers authentication, bulk assessment, contact investigation, non-mutating simulation, purpose-remediation approval/apply/reassessment, breach tracking, rights requests, optional AI explanation/fallback, integrity checkpoints, proof export, CSV download, console errors, and mobile overflow on the dashboard, contact list, and contact detail.
+The browser smoke test uses installed Chrome against a running production server (`npm start`). It covers authentication, bulk assessment, contact investigation, non-mutating simulation, purpose-remediation approval/apply/reassessment, incident tracking, optional AI explanation/fallback, integrity checkpoints, proof export, CSV download, console errors, and mobile overflow on the dashboard, contact list, and contact detail.
 
 ## Render deployment
 

@@ -95,7 +95,6 @@ export function RuleTraceStudio({ rules }: { rules: ComplianceRuleVersion[] }) {
         <div>
           <span className="eyebrow">Interactive demo workflow</span>
           <h2>Rule Trace Studio</h2>
-          <p>Change the evidence, execute the real scoring function and inspect the complete decision trace.</p>
         </div>
         <div className="studio-safety"><strong>No writes</strong><span>Browser-only scenario</span></div>
       </header>

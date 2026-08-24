@@ -3,18 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { REMEDIATION_BY_RULE, type RuleCode } from "@/lib/rules-engine";
-
-interface AiBriefing {
-  headline: string;
-  summary: string;
-  keyFindings: Array<{ ruleCode: string; status: "pass" | "fail"; meaning: string }>;
-  nextSteps: string[];
-  legalNote: string;
-}
+import type { AIExplanation } from "@/lib/ai/mistral";
 
 type Output =
   | { kind: "message"; text: string }
-  | { kind: "ai"; briefing: AiBriefing }
+  | { kind: "ai"; briefing: AIExplanation; source: "mistral" | "deterministic_fallback" }
   | null;
 
 export function AssessmentActions({
@@ -29,7 +22,7 @@ export function AssessmentActions({
   failedRules: RuleCode[];
 }) {
   const [selected, setSelected] = useState<RuleCode[]>(failedRules);
-  const [busy, setBusy] = useState<"" | "sim" | "ai" | "fix">("");
+  const [busy, setBusy] = useState<"" | "ai" | "fix">("");
   const [output, setOutput] = useState<Output>(null);
   const router = useRouter();
 
@@ -45,27 +38,9 @@ export function AssessmentActions({
     setBusy("");
     setOutput(
       response.ok
-        ? { kind: "ai", briefing: body.explanation }
+        ? { kind: "ai", briefing: body.explanation, source: body.source }
         : { kind: "message", text: body.error },
     );
-  }
-
-  async function simulate() {
-    setBusy("sim");
-    setOutput(null);
-    const response = await fetch("/api/simulate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contactId, rulesToFix: selected }),
-    });
-    const body = await response.json();
-    setBusy("");
-    setOutput({
-      kind: "message",
-      text: response.ok
-        ? `Projected: ${body.projected.score}/100 · ${String(body.projected.status).replaceAll("_", " ")}`
-        : body.error,
-    });
   }
 
   async function requestRemediation() {
@@ -93,24 +68,22 @@ export function AssessmentActions({
     <section className="card stack decision-lab">
       <div className="section-row compact">
         <div>
-          <span className="eyebrow">Remediation scenario analysis</span>
-          <h2>Evaluate corrective actions</h2>
+          <span className="eyebrow">Corrective action</span>
+          <h2>Resolve failed controls</h2>
         </div>
-        <span className="safety-chip">Simulation only</span>
+        <span className="safety-chip">Human approval required</span>
       </div>
-      <div className="stack">
+      <div className="remediation-select">
         {failedRules.map((code) => (
-          <label key={code} className="small">
+          <label key={code}>
             <input
               type="checkbox"
               checked={selected.includes(code)}
-              onChange={(event) =>
-                setSelected(
-                  event.target.checked ? [...selected, code] : selected.filter((item) => item !== code),
-                )
-              }
-            />{" "}
-            {code} · {REMEDIATION_BY_RULE[code].label}
+              onChange={(event) => setSelected(
+                event.target.checked ? [...selected, code] : selected.filter((item) => item !== code),
+              )}
+            />
+            <span><strong>{code}</strong><small>{REMEDIATION_BY_RULE[code].label}</small></span>
           </label>
         ))}
       </div>
@@ -126,15 +99,12 @@ export function AssessmentActions({
             <li><b>3</b><span>DPO verifies the response</span></li>
             <li><b>4</b><span>Sync evidence and reassess</span></li>
           </ol>
-          <p>Production connects to the customer’s email and consent-management system; this demo represents that handoff without sending a real email.</p>
+          <p>Production connects to the customer&apos;s email and consent-management system; this demo represents that handoff without sending a real email.</p>
         </aside>
       )}
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        <button className="btn" onClick={simulate} disabled={Boolean(busy) || !selected.length}>
-          {busy === "sim" ? "Simulating…" : "Simulate selected"}
-        </button>
-        <button className="btn secondary" onClick={explain} disabled={Boolean(busy)}>
-          {busy === "ai" ? "Building briefing…" : "Ask AI to explain"}
+      <div className="action-strip">
+        <button className="btn" onClick={explain} disabled={Boolean(busy)}>
+          {busy === "ai" ? "Building insight brief…" : "Ask AI to explain"}
         </button>
         <button
           className="btn secondary"
@@ -145,37 +115,50 @@ export function AssessmentActions({
         </button>
       </div>
       {output?.kind === "message" && (
-        <div className="notice compact-notice" aria-live="polite">
-          {output.text}
-        </div>
+        <div className="notice compact-notice" aria-live="polite">{output.text}</div>
       )}
       {output?.kind === "ai" && (
         <article className="ai-brief" aria-live="polite">
-          <header>
-            <span className="eyebrow">AI briefing · persisted verdict</span>
-            <h3>{output.briefing.headline}</h3>
-            <p>{output.briefing.summary}</p>
-          </header>
-          <div className="ai-findings">
-            {output.briefing.keyFindings.map((finding) => (
-              <div className="ai-finding" key={finding.ruleCode}>
-                <span className={`badge ${finding.status}`}>
-                  {finding.status === "pass" ? "✓" : "✕"} {finding.ruleCode}
-                </span>
-                <p>{finding.meaning}</p>
-              </div>
-            ))}
-          </div>
-          {output.briefing.nextSteps.length > 0 && (
+          <header className="ai-brief-head">
             <div>
-              <strong>Human next steps</strong>
-              <ol>
-                {output.briefing.nextSteps.map((step) => (
-                  <li key={step}>{step}</li>
-                ))}
-              </ol>
+              <span className="eyebrow">Evidence-grounded insight brief</span>
+              <h3>{output.briefing.headline}</h3>
+              <p>{output.briefing.executiveSummary}</p>
             </div>
-          )}
+            <span className="ai-source">{output.source === "mistral" ? "AI synthesis" : "Verified fallback"}</span>
+          </header>
+
+          <div className={`ai-risk-signal ${output.briefing.riskSignal.level}`}>
+            <span>{output.briefing.riskSignal.level}</span>
+            <strong>{output.briefing.riskSignal.label}</strong>
+            <p>{output.briefing.riskSignal.rationale}</p>
+          </div>
+
+          <section>
+            <strong className="ai-section-title">Derived insights</strong>
+            <div className="ai-insight-grid">
+              {output.briefing.insights.map((insight) => (
+                <article className="ai-insight" key={`${insight.category}-${insight.title}`}>
+                  <div><span>{insight.category.replaceAll("_", " ")}</span><b>{insight.confidence} confidence</b></div>
+                  <h4>{insight.title}</h4>
+                  <p>{insight.insight}</p>
+                  <footer>{insight.evidence.join(" · ")}</footer>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section>
+            <strong className="ai-section-title">Governed next actions</strong>
+            <ol className="ai-action-list">
+              {output.briefing.actions.sort((left, right) => left.priority - right.priority).map((action) => (
+                <li key={`${action.priority}-${action.owner}`}>
+                  <b>{String(action.priority).padStart(2, "0")}</b>
+                  <span><strong>{action.owner}</strong><p>{action.action}</p><small>Success signal · {action.successSignal}</small></span>
+                </li>
+              ))}
+            </ol>
+          </section>
           <footer>ⓘ {output.briefing.legalNote}</footer>
         </article>
       )}

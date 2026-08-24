@@ -1,0 +1,996 @@
+COMPLYLENS — SILENT DEMO VIDEO WORKFLOW
+========================================
+
+TARGET LENGTH: 5 minutes 45 seconds
+FORMAT: Silent screen recording with caption overlays
+LOCAL LINK: http://localhost:3000/login
+PUBLIC LINK: https://complylens.onrender.com/login
+
+IMPORTANT
+---------
+
+Use the local link for recording because it avoids Render loading delays.
+
+Keep Docker Desktop and the local application running throughout recording.
+
+Do not display passwords, API keys, Render settings, browser notifications, or clipboard contents.
+
+Record separate clips and join them in CapCut, Canva, Clipchamp, Premiere, or another editor.
+
+Aditi Kapoor's remediation changes the demo database. Rehearse everything up to Request remediation, but click Request remediation only during the final recording.
+
+Initial contact to use:
+
+Name: Aditi Kapoor
+Email: contact.02@example.in
+Expected score: 70/100
+Expected failed control: DPDP-001
+Expected reason: NO_ACTIVE_CONSENT
+
+Backup contact if Aditi is already compliant:
+
+Name: Ishaan Verma
+Email: contact.26@example.in
+Expected score: 70/100
+
+
+RECORDING SETUP
+===============
+
+ACTION 001
+Time: Before recording
+Do: Open Chrome in Incognito mode.
+Expected: A clean browser with no personal account visible.
+
+----------------------------------------
+
+ACTION 002
+Time: Before recording
+Do: Maximize the Chrome window.
+Expected: Chrome fills the entire 1920 × 1080 display.
+
+----------------------------------------
+
+ACTION 003
+Time: Before recording
+Do: Press Ctrl + Shift + B to hide the bookmarks bar.
+Expected: No bookmarks are visible.
+
+----------------------------------------
+
+ACTION 004
+Time: Before recording
+Do: Set Chrome zoom to 80% or 90%.
+Expected: Dashboard sections fit comfortably without making text unreadable.
+
+----------------------------------------
+
+ACTION 005
+Time: Before recording
+Do: Enable Windows Do Not Disturb.
+Expected: No notifications appear during recording.
+
+----------------------------------------
+
+ACTION 006
+Time: Before recording
+Do: Configure the recorder to 1920 × 1080, 30 FPS, MP4, microphone disabled, system audio disabled, and cursor visible.
+Expected: A silent full-HD recording.
+
+----------------------------------------
+
+ACTION 007
+Time: Before recording
+Do: Open http://localhost:3000/login.
+Expected: The ComplyLens login page opens immediately.
+
+----------------------------------------
+
+ACTION 008
+Time: Before recording
+Do: Prepare eleven separate output clips with these names:
+
+01-opening.mp4
+02-dashboard.mp4
+03-rule-engine.mp4
+04-rule-studio.mp4
+05-graphs.mp4
+06-aditi.mp4
+07-dpo-login.mp4
+08-dpo-integrity-remediation.mp4
+09-incident.mp4
+10-rights-timeline.mp4
+11-closing.mp4
+
+Expected: Each section can be recorded again without restarting the entire video.
+
+
+CLIP 01 — OPENING TITLE
+=======================
+
+ACTION 009
+Time: 0:00–0:08
+Do: Display a clean opening slide for eight seconds.
+Slide text:
+
+COMPLYLENS
+
+Deterministic DPDP Compliance Operations
+
+Team Cloud Code
+
+Rules decide · AI explains · Humans approve
+
+Expected: Off-white background, dark-teal title, black body text, no decorative AI artwork.
+
+----------------------------------------
+
+ACTION 010
+Time: 0:07–0:08
+Do: Apply a simple 0.2-second fade to the next clip.
+Expected: A restrained transition into the login page.
+
+
+CLIP 02 — ADMINISTRATOR LOGIN AND DASHBOARD
+===========================================
+
+ACTION 011
+Time: Before starting this clip
+Do: Enter admin@complylens.demo in the Email field.
+Expected: Administrator email is visible.
+
+----------------------------------------
+
+ACTION 012
+Time: Before starting this clip
+Do: Enter the administrator demo password in the Password field while recording is stopped.
+Expected: Only password dots are visible.
+
+----------------------------------------
+
+ACTION 013
+Time: 0:08
+Do: Start recording after both login fields have been filled.
+Caption: Persona 1 · CRM and Privacy Operations Administrator
+Expected: No password typing is captured.
+
+----------------------------------------
+
+ACTION 014
+Time: 0:10
+Do: Move the cursor to Sign in securely.
+Expected: The button is clearly visible.
+
+----------------------------------------
+
+ACTION 015
+Time: 0:11
+Do: Click Sign in securely.
+Expected: The dashboard loads.
+
+----------------------------------------
+
+ACTION 016
+Time: 0:15–0:22
+Do: Pause at the top of the dashboard.
+Caption: Primary persona · DPO / Privacy Operations Lead
+Expected: Evidence, verdicts, human decisions is visible.
+
+----------------------------------------
+
+ACTION 017
+Time: 0:22–0:30
+Do: Move the cursor slowly across Primary persona, Daily collaborators, and Customer-system impact.
+Caption: CRM stewards investigate · DPO reviewers govern
+Expected: The three product personas and system boundary are visible.
+
+----------------------------------------
+
+ACTION 018
+Time: 0:30–0:38
+Do: Move the cursor across Organization compliance, Contacts assessed, Open findings, and Illustrative exposure.
+Caption: One evidence layer above existing customer systems
+Expected: The four portfolio metrics are visible.
+
+----------------------------------------
+
+ACTION 019
+Time: 0:38–0:45
+Do: Slowly scroll toward the deterministic rule-engine explanation.
+Expected: The transition is smooth.
+
+----------------------------------------
+
+ACTION 020
+Time: During this clip
+Do not: Click Run assessment.
+Reason: It appends new assessments and is unnecessary for the video.
+
+
+CLIP 03 — HOW THE RULE ENGINE WORKS
+===================================
+
+ACTION 021
+Time: 0:45–0:49
+Do: Stop scrolling at How evidence becomes a reproducible verdict.
+Caption: Evidence → versioned rules → score → persisted verdict
+Expected: The complete four-stage engine flow is visible.
+
+----------------------------------------
+
+ACTION 022
+Time: 0:49–0:54
+Do: Point to Normalize evidence.
+Caption: 1 · Normalize evidence from connected customer systems
+Expected: Consent, purpose, retention, notice, and minimization are visible.
+
+----------------------------------------
+
+ACTION 023
+Time: 0:54–0:59
+Do: Point to Evaluate controls.
+Caption: 2 · Every versioned control returns pass or fail
+Expected: Judges see the control-evaluation stage.
+
+----------------------------------------
+
+ACTION 024
+Time: 0:59–1:04
+Do: Point to Calculate posture.
+Caption: 3 · Start at 100 and subtract failed-control weights
+Expected: The deterministic scoring method is clear.
+
+----------------------------------------
+
+ACTION 025
+Time: 1:04–1:08
+Do: Point to Persist the verdict.
+Caption: 4 · Append the verdict and exact rule version
+Expected: Append-only history is explained.
+
+----------------------------------------
+
+ACTION 026
+Time: 1:08–1:12
+Do: Show the Active control registry and Extension contract.
+Caption: AI starts only after the deterministic verdict is saved
+Expected: Rule codes, versions, deductions, severities, and legal references are visible.
+
+
+CLIP 04 — INTERACTIVE RULE TRACE STUDIO
+=======================================
+
+ACTION 027
+Time: 1:12
+Do: Scroll to Rule Trace Studio.
+Expected: The dark interactive section fills most of the screen.
+
+----------------------------------------
+
+ACTION 028
+Time: 1:13–1:18
+Do: Confirm Aditi: expired consent is the selected/default scenario.
+Caption: Aditi’s expired consent produces a deterministic 70/100
+Expected evidence:
+
+Active consent: MISSING
+Lawful purpose: PRESENT
+Current retention date: PRESENT
+Notice delivery recorded: PRESENT
+Minimization reviewed: PRESENT
+
+----------------------------------------
+
+ACTION 029
+Time: 1:18–1:26
+Do: Move the cursor across the evidence switches.
+Expected: Judges see where each evidence item originates.
+
+----------------------------------------
+
+ACTION 030
+Time: 1:26–1:34
+Do: Move the cursor through all five deterministic trace rows.
+Caption: Every decision exposes version, reason code and deduction
+Expected result:
+
+Score: 70/100
+Status: At risk
+DPDP-001: NO ACTIVE CONSENT
+Deduction: −30
+
+----------------------------------------
+
+ACTION 031
+Time: 1:34
+Do: Click Fully compliant.
+Expected: All five draft evidence switches change to PRESENT.
+
+----------------------------------------
+
+ACTION 032
+Time: 1:37
+Do: Click Execute changed evidence.
+Expected result:
+
+Score: 100/100
+Status: Compliant
+All five controls: Pass
+
+----------------------------------------
+
+ACTION 033
+Time: 1:38–1:44
+Do: Pause on 100/100 and the changed SHA-256 scenario fingerprint.
+Caption: Changed evidence produces a new trace and fingerprint
+Expected: The different scenario creates a different fingerprint.
+
+----------------------------------------
+
+ACTION 034
+Time: 1:44
+Do: Click Replay identical evidence.
+Expected: IDENTICAL REPLAY CONFIRMED appears.
+
+----------------------------------------
+
+ACTION 035
+Time: 1:45–1:51
+Do: Point to the unchanged scenario fingerprint.
+Caption: Same evidence + same versions = same verdict
+Expected: The fingerprint remains identical.
+
+----------------------------------------
+
+ACTION 036
+Time: 1:51–1:54
+Do: Display this small disclaimer caption:
+Caption: Scenario fingerprint—not an audit seal
+Expected: No claim of absolute immutability is made.
+
+----------------------------------------
+
+ACTION 037
+Time: 1:54
+Do: Click Preview a future rule.
+Expected: DPDP-006 extension preview opens.
+
+----------------------------------------
+
+ACTION 038
+Time: 1:55–2:02
+Do: Move the cursor across Evidence adapter, Typed evaluator, Version registry, and Boundary tests.
+Caption: New controls are tested, versioned and activated prospectively
+Expected text:
+
+DPDP-006
+Illustrative data-accuracy control
+INACTIVE · ZERO SCORE IMPACT
+
+
+CLIP 05 — REMEDIATION IMPACT AND GRAPHS
+=======================================
+
+ACTION 039
+Time: 2:02
+Do: Scroll to Remediation impact analysis.
+Caption: Prioritize remediation by recoverable score and affected contacts
+Expected: The portfolio remediation graph/list is visible.
+
+----------------------------------------
+
+ACTION 040
+Time: 2:05
+Do: Click the first or highest-impact control row.
+Expected: The impacted contacts expand below the row.
+
+----------------------------------------
+
+ACTION 041
+Time: 2:06–2:12
+Do: Show recoverable points, failed-contact count, and possible status improvements.
+Expected: Prioritization is clear.
+
+----------------------------------------
+
+ACTION 042
+Time: 2:12–2:22
+Do: Scroll to Current posture and show the compliance-distribution and score charts.
+Caption: Portfolio analytics come from persisted assessments
+Expected: Both graphs are visible.
+
+
+CLIP 06 — ADITI INVESTIGATION AND REMEDIATION REQUEST
+=====================================================
+
+ACTION 043
+Time: 2:22
+Do: Click Contacts in the navigation.
+Expected: Contact directory opens.
+
+----------------------------------------
+
+ACTION 044
+Time: 2:24
+Do: Click the search field and enter Aditi Kapoor.
+Expected: Aditi Kapoor appears in the filtered table.
+
+----------------------------------------
+
+ACTION 045
+Time: 2:27
+Do: Click Aditi Kapoor.
+Expected: Her contact-evidence page opens.
+
+----------------------------------------
+
+ACTION 046
+Time: 2:29–2:34
+Do: Pause on 70/100 and At risk.
+Caption: Contact-level evidence explains exactly why the control failed
+Expected: Aditi's latest score and status are visible.
+
+----------------------------------------
+
+ACTION 047
+Time: 2:34–2:39
+Do: Scroll to the DPDP-001 result card.
+Expected text:
+
+DPDP-001 · v1
+NO ACTIVE CONSENT
+−30
+
+----------------------------------------
+
+ACTION 048
+Time: 2:39–2:45
+Do: Scroll to Consent handoff · demo connector.
+Caption: The internal operator never grants consent for Aditi
+Expected workflow:
+
+Send notice and consent link
+Data principal chooses externally
+DPO verifies the response
+Sync evidence and reassess
+
+----------------------------------------
+
+ACTION 049
+Time: 2:45–2:49
+Do: Display this caption:
+Caption: The data principal chooses through an external consent channel
+Expected: The consent boundary is unambiguous.
+
+----------------------------------------
+
+ACTION 050
+Time: 2:49
+Do: Ensure DPDP-001 is selected.
+Expected: The consent control checkbox is checked.
+
+----------------------------------------
+
+ACTION 051
+Time: 2:50
+Do: Move to Open recommendations.
+Expected: Exactly one DPDP-001 consent-renewal recommendation is visible.
+
+----------------------------------------
+
+ACTION 052
+Time: 2:51–2:56
+Do: Pause on the unique recommendation.
+Caption: One open action per contact and failed control
+Expected: No repetitive recommendation rows are visible.
+
+----------------------------------------
+
+ACTION 053
+Time: 2:56
+Do: Click Ask AI to explain.
+Expected: A structured explanation loads.
+
+----------------------------------------
+
+ACTION 054
+Time: During editing
+Do: Remove the AI loading delay from the final video.
+Expected: The click cuts directly to the completed structured explanation.
+
+----------------------------------------
+
+ACTION 055
+Time: 2:58–3:05
+Do: Show the AI risk signal, derived insights, cited rule evidence, governed actions, and success signals.
+Caption: AI explains the saved verdict—it cannot score or write
+Expected: Distinct evidence-grounded insights are visible.
+
+----------------------------------------
+
+ACTION 056
+Time: 3:05
+Do: Click Request remediation.
+Warning: Perform this action only during the final take.
+Expected: A remediation request is created.
+
+----------------------------------------
+
+ACTION 057
+Time: 3:06–3:13
+Do: Pause on the confirmation message.
+Expected message includes:
+
+Consent email queued for the data principal
+
+Caption: No consent is recorded until the external response is verified
+
+----------------------------------------
+
+ACTION 058
+Time: 3:13–3:17
+Do: Stop recording this clip.
+Expected: The pending request remains available for the DPO workflow.
+
+
+CLIP 07 — SWITCH TO DPO REVIEWER
+================================
+
+ACTION 059
+Time: Between clips
+Do: Click Log out.
+Expected: Login page appears.
+
+----------------------------------------
+
+ACTION 060
+Time: While recording is stopped
+Do: Enter reviewer@complylens.demo in the Email field.
+Expected: DPO reviewer email is visible.
+
+----------------------------------------
+
+ACTION 061
+Time: While recording is stopped
+Do: Enter the DPO reviewer demo password.
+Expected: Only password dots are visible.
+
+----------------------------------------
+
+ACTION 062
+Time: 3:17
+Do: Start recording and click Sign in securely.
+Caption: Persona 2 · Independent DPO reviewer
+Expected: Reviewer dashboard loads.
+
+----------------------------------------
+
+ACTION 063
+Time: 3:23
+Do: Click Governance in the navigation.
+Expected: The focused review and approval workspace opens.
+
+
+CLIP 08 — DPO OVERSIGHT, INTEGRITY, AND REMEDIATION
+===================================================
+
+ACTION 064
+Time: 3:30–3:37
+Do: Show the Review, approve, verify heading and the three governance metrics.
+Caption: A score alone does not close a compliance gap
+Expected: The governance purpose is clear without extra explanatory panels.
+
+----------------------------------------
+
+ACTION 065
+Time: 3:37–3:45
+Do: Move the cursor through Compliant contacts, Retention due within 90 days, and Awaiting human action.
+Caption: The DPO independently reviews proposed corrective actions
+Expected: Only decision-relevant metrics are visible.
+
+----------------------------------------
+
+ACTION 066
+Time: 3:45–3:55
+Do: Scroll below the remediation table and click Open verification workspace.
+Expected: The audit-integrity workspace expands and loads as Verified.
+
+----------------------------------------
+
+ACTION 067
+Time: 3:55–4:00
+Do: Show Audit events, Hash chain, Checkpoints, and Latest proof.
+Caption: Canonical audit events are chained with SHA-256
+Expected: Proof statistics are visible.
+
+----------------------------------------
+
+ACTION 068
+Time: 4:00
+Do: Click Seal checkpoint.
+Expected: A verified checkpoint is added.
+
+----------------------------------------
+
+ACTION 069
+Time: 4:01–4:08
+Do: Show the Merkle tree, current root, and latest inclusion proof.
+Caption: Merkle checkpoints provide portable inclusion evidence
+Expected: The proof visualization is visible.
+
+----------------------------------------
+
+ACTION 070
+Time: 4:08–4:12
+Do: Optionally click Export proof bundle.
+Expected: A JSON proof file downloads.
+
+----------------------------------------
+
+ACTION 071
+Time: 4:12–4:15
+Do: Display this caption:
+Caption: Tamper-evident—not absolute database immutability
+Expected: The claim remains accurate.
+
+----------------------------------------
+
+ACTION 072
+Time: 4:15
+Do: Scroll to Independent remediation review.
+Expected: Aditi Kapoor's pending consent-remediation row is visible.
+
+----------------------------------------
+
+ACTION 073
+Time: 4:17–4:21
+Do: Pause on Aditi's row.
+Expected row:
+
+Contact: Aditi Kapoor
+Type: consent renewal
+Status: pending approval
+Requested by: Demo Administrator
+
+----------------------------------------
+
+ACTION 074
+Time: 4:21
+Do: Click Approve outreach.
+Warning: Perform this only during the final take.
+Expected: The page refreshes and the request becomes approved.
+
+----------------------------------------
+
+ACTION 075
+Time: 4:22–4:26
+Do: Wait for Sync verified consent & reassess to appear.
+Caption: The requester cannot approve their own remediation
+Expected: Separation of duties is visible.
+
+----------------------------------------
+
+ACTION 076
+Time: 4:26
+Do: Click Sync verified consent & reassess.
+Expected: A confirmation dialog appears.
+
+----------------------------------------
+
+ACTION 077
+Time: 4:27
+Do: Click OK in the confirmation dialog.
+Expected: The verified external response is synchronized.
+
+----------------------------------------
+
+ACTION 078
+Time: 4:28–4:34
+Do: Wait for reassessment to finish.
+Caption: DPO verifies the external response before evidence sync
+Expected: Aditi's request disappears from the pending-action table.
+
+----------------------------------------
+
+ACTION 079
+Time: 4:34–4:38
+Do: Display this caption:
+Caption: A new assessment is appended—the old verdict remains in history
+Expected: Append-only assessment behavior is explained.
+
+----------------------------------------
+
+ACTION 080
+Time: 4:38
+Do: Open Contacts and search Aditi Kapoor.
+Expected: Aditi appears.
+
+----------------------------------------
+
+ACTION 081
+Time: 4:41–4:45
+Do: Open Aditi and show her new result.
+Expected result:
+
+100/100
+Compliant
+DPDP-001: ACTIVE CONSENT FOUND
+
+Caption: Verified consent evidence changes the deterministic verdict
+
+
+CLIP 09 — INCIDENT RESPONSE
+===========================
+
+ACTION 082
+Time: Before starting this clip
+Do: Open Incident response.
+Expected: The breach-response workspace appears.
+
+----------------------------------------
+
+ACTION 083
+Time: Before starting this clip
+Do: Expand Log a new incident, then set Occurred at to today's date and approximately 15 minutes before the current time.
+Expected: A valid recent date/time is entered.
+
+----------------------------------------
+
+ACTION 084
+Time: Before starting this clip
+Do: Enter 7 in Affected-contact count.
+Expected: The number 7 is visible.
+
+----------------------------------------
+
+ACTION 085
+Time: Before starting this clip
+Do: Enter this description:
+
+Demo: CRM export sent to an unauthorized recipient
+
+Expected: The form is ready before recording begins.
+
+----------------------------------------
+
+ACTION 086
+Time: 4:45
+Do: Start recording and show Active incidents, Affected contacts, Overdue milestones, and Next deadline.
+Caption: One command view for scope, deadlines, and evidence
+Expected: The response summary is visible.
+
+----------------------------------------
+
+ACTION 087
+Time: 4:51
+Do: Click Create incident.
+Warning: Perform this only during the final take.
+Expected: A new incident card appears.
+
+----------------------------------------
+
+ACTION 088
+Time: 4:53–5:00
+Do: Show the Detected, Contained, Closed lifecycle and both notification milestones.
+Caption: Operational state and notification evidence remain distinct
+Expected: The lifecycle and both evidence sections are visible.
+
+----------------------------------------
+
+ACTION 089
+Time: 5:00
+Do: Click Log Board notification and Log affected-person notification.
+Expected: Both notification timestamps are recorded.
+
+----------------------------------------
+
+ACTION 090
+Time: 5:01–5:08
+Do: Click Mark contained, then Close incident.
+Caption: Guarded transitions become audit evidence
+Expected: The lifecycle reaches Closed only after notification evidence is complete.
+
+
+CLIP 10 — READINESS TIMELINE AND WORKFLOW RECAP
+===============================================
+
+ACTION 091
+Time: 5:08
+Do: Click Governance.
+Expected: The governance workspace opens.
+
+----------------------------------------
+
+ACTION 092
+Time: 5:10
+Do: Click View readiness timeline.
+Expected: The DPDP readiness timeline opens.
+
+----------------------------------------
+
+ACTION 093
+Time: 5:11
+Do: Pause on Foundation.
+Expected: Its mapped rules, readiness percentage, and blockers are visible.
+
+----------------------------------------
+
+ACTION 094
+Time: 5:12
+Do: Move to Consent Manager.
+Expected: Its independent readiness calculation is visible.
+
+----------------------------------------
+
+ACTION 095
+Time: 5:13
+Do: Move to Full operational rules.
+Expected: The complete mapped-control phase is visible.
+
+----------------------------------------
+
+ACTION 096
+Time: 5:14–5:18
+Do: Show the readiness percentages and blocking-contact links.
+Caption: Readiness is calculated from latest persisted control results
+Expected: The calculation is visibly connected to current evidence.
+
+----------------------------------------
+
+ACTION 097
+Time: 5:18
+Do: Click Overview.
+Expected: The compliance control room opens.
+
+----------------------------------------
+
+ACTION 098
+Time: 5:19–5:25
+Do: Move across Evidence, Verdict, Remediation, and Verified outcome.
+Caption: Deterministic scoring first · human governance second
+Expected: Aditi's four-stage decision path is visible in one line.
+
+----------------------------------------
+
+ACTION 099
+Time: 5:24–5:25
+Do: Display this caption:
+Caption: Rules decide · AI explains · Humans approve
+Expected: The product boundary is explicit before the closing slide.
+
+
+CLIP 11 — CLOSING SLIDE
+=======================
+
+ACTION 100
+Time: 5:25–5:45
+Do: Display the closing slide.
+Slide text:
+
+COMPLYLENS
+
+Rules decide.
+AI explains.
+Humans approve.
+Evidence remains verifiable.
+
+Expected: Off-white background, dark-teal title, restrained typography.
+
+----------------------------------------
+
+ACTION 101
+Time: 5:25–5:45
+Do: Place the live-product QR code on the closing slide.
+Label: LIVE PRODUCT
+URL: https://complylens.onrender.com/login
+Asset: public/complylens-live-qr.png
+Expected: QR code is at least 3 cm wide with its white quiet zone intact.
+
+----------------------------------------
+
+ACTION 102
+Time: 5:25–5:45
+Do: Place the GitHub QR code beside the live QR.
+Label: SOURCE CODE
+URL: https://github.com/nischala755/salesforce
+Asset: public/complylens-github-qr.png
+Expected: QR code is at least 3 cm wide with its white quiet zone intact.
+
+----------------------------------------
+
+ACTION 103
+Time: 5:25–5:45
+Do: Add this footer:
+
+Operational aid—not legal certification or legal advice.
+
+Expected: Footer remains visible for the entire closing slide.
+
+
+EDITING ACTIONS
+===============
+
+ACTION 104
+Do: Import all eleven clips into the editor in numerical order.
+Expected: The story follows the exact workflow above.
+
+----------------------------------------
+
+ACTION 105
+Do: Remove all loading screens, typing delays, accidental cursor movements, and dead time.
+Expected: Total duration remains between 5:20 and 5:55.
+
+----------------------------------------
+
+ACTION 106
+Do: Use simple cuts or 0.2-second fades only.
+Expected: The video does not look over-produced or AI-generated.
+
+----------------------------------------
+
+ACTION 107
+Do: Place captions at the bottom of the screen using white text on a dark translucent background.
+Recommended caption size: 28–32 px.
+Expected: Captions are readable at 1080p.
+
+----------------------------------------
+
+ACTION 108
+Do: Keep each caption visible for at least three seconds.
+Expected: Judges can read every caption without pausing.
+
+----------------------------------------
+
+ACTION 109
+Do: Remove or crop any visible passwords, API keys, Render settings, notifications, or unrelated browser tabs.
+Expected: No credential or personal-data exposure.
+
+----------------------------------------
+
+ACTION 110
+Do: Export the completed video as MP4, 1920 × 1080, 30 FPS.
+Expected: Final video is ready for submission.
+
+
+FINAL QUALITY CHECK
+===================
+
+[ ] Total duration is between 5:20 and 5:55.
+
+[ ] No voice or microphone audio is present.
+
+[ ] No password, API key, or Render setting is visible.
+
+[ ] Aditi Kapoor—not Aditi Desai—is demonstrated.
+
+[ ] Rule-engine four-stage flow is visible.
+
+[ ] Rule Trace Studio reaches 100/100.
+
+[ ] IDENTICAL REPLAY CONFIRMED is visible.
+
+[ ] DPDP-006 shows INACTIVE · ZERO SCORE IMPACT.
+
+[ ] Consent is described as a data-principal decision.
+
+[ ] Administrator and DPO reviewer are separate personas.
+
+[ ] Simulation is described as no-write.
+
+[ ] AI is described as explanation-only.
+
+[ ] Aditi's DPO-approved consent sync is shown.
+
+[ ] Audit hash chain and Merkle proof are shown.
+
+[ ] Merkle functionality is described as tamper-evident, not blockchain.
+
+[ ] Incident response integration boundary is shown.
+
+[ ] Rights-request due date is shown.
+
+[ ] Readiness is not presented as legal certification.
+
+[ ] Live and GitHub QR codes scan successfully.
+
+[ ] Closing legal disclaimer is visible.

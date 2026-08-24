@@ -4,7 +4,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { AssessmentActions } from "@/components/assessment-actions";
 import { AssessButton } from "@/components/assess-button";
 import { ComplianceTimeMachine } from "@/components/compliance-time-machine";
-import type { RuleCode } from "@/lib/rules-engine";
+import { REMEDIATION_BY_RULE, type RuleCode } from "@/lib/rules-engine";
 
 export default async function ContactPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -16,7 +16,7 @@ export default async function ContactPage({ params }: { params: Promise<{ id: st
           orderBy: { assessedAt: "desc" },
           include: { results: { orderBy: { ruleCode: "asc" } } },
         },
-        recommendations: { where: { status: "open" }, orderBy: { createdAt: "desc" } },
+        recommendations: { where: { status: "open" }, orderBy: { ruleCode: "asc" } },
         consents: { orderBy: { grantedAt: "desc" } },
         purposes: true,
       },
@@ -93,16 +93,26 @@ export default async function ContactPage({ params }: { params: Promise<{ id: st
                   .filter((result) => !result.passed)
                   .map((result) => result.ruleCode as RuleCode)}
               />
-              <section className="card">
-                <h2>Open recommendations</h2>
+              <section className="card recommendation-panel">
+                <div className="section-row compact">
+                  <div><span className="eyebrow">Action register</span><h2>Open recommendations</h2></div>
+                  <strong className="recommendation-count">{contact.recommendations.length}</strong>
+                </div>
                 {contact.recommendations.length ? (
-                  contact.recommendations.map((recommendation) => (
-                    <p key={recommendation.id}>
-                      <strong>{recommendation.ruleCode}</strong>
-                      <br />
-                      <span className="small muted">{recommendation.message}</span>
-                    </p>
-                  ))
+                  <div className="recommendation-list">
+                    {contact.recommendations.map((recommendation) => {
+                      const definition = REMEDIATION_BY_RULE[recommendation.ruleCode as RuleCode];
+                      return (
+                        <article key={recommendation.id}>
+                          <span>{recommendation.ruleCode}</span>
+                          <div>
+                            <strong>{definition?.label ?? recommendation.remediationType.replaceAll("_", " ")}</strong>
+                            <p>{recommendation.message}</p>
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
                 ) : (
                   <p className="muted">None.</p>
                 )}

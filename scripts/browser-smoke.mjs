@@ -29,8 +29,11 @@ try {
   await page.getByLabel("Password").fill(adminPassword);
   await page.getByRole("button", { name: "Sign in securely" }).click();
   await page.waitForURL("**/dashboard");
-  await page.getByText("Evidence, verdicts,").waitFor();
+  await page.getByRole("heading", { name: "Evidence to accountable action." }).waitFor();
+  await page.getByText("How the scoring engine works").click();
+  await page.getByText("How evidence becomes a reproducible verdict").waitFor();
   assert(await page.getByText("How evidence becomes a reproducible verdict").isVisible(), "Rule-engine explanation did not render.");
+  const coreBeforeRuleTrace = await Promise.all([prisma.contact.count(), prisma.complianceAssessment.count(), prisma.complianceResult.count()]);
   const studio = page.locator(".rule-studio");
   await studio.getByRole("heading", { name: "Rule Trace Studio" }).waitFor();
   await page.waitForFunction(() => !document.querySelector(".fingerprint-band code")?.textContent?.includes("calculating"));
@@ -46,11 +49,16 @@ try {
   assert(await studio.locator(".fingerprint-band code").textContent() === compliantFingerprint, "Identical evidence did not reproduce the same fingerprint.");
   await studio.getByRole("button", { name: "Preview a future rule" }).click();
   await studio.getByText("INACTIVE · ZERO SCORE IMPACT").waitFor();
+  const coreAfterRuleTrace = await Promise.all([prisma.contact.count(), prisma.complianceAssessment.count(), prisma.complianceResult.count()]);
+  assert(JSON.stringify(coreAfterRuleTrace) === JSON.stringify(coreBeforeRuleTrace), "Rule Trace Studio mutated customer or assessment records.");
   assert(await page.getByText("Remediation impact analysis").isVisible(), "Remediation impact analysis did not render.");
   consoleErrors.length = 0; // The intentional failed-login 401 above is expected and already asserted in the UI.
 
   await page.getByRole("button", { name: "Run assessment" }).click();
   await page.getByText(/40 assessments appended/).waitFor({ timeout: 30_000 });
+  const openRecommendations = await prisma.complianceRecommendation.findMany({ where: { status: "open" }, select: { contactId: true, ruleCode: true } });
+  const recommendationKeys = openRecommendations.map((recommendation) => `${recommendation.contactId}:${recommendation.ruleCode}`);
+  assert(new Set(recommendationKeys).size === recommendationKeys.length, "Duplicate open recommendations exist for the same contact and control.");
 
   await page.goto(`${baseURL}/contacts?q=contact.06%40example.in`, { waitUntil: "networkidle" });
   const row = page.locator("tr", { hasText: "contact.06@example.in" });
@@ -58,12 +66,8 @@ try {
   await page.waitForURL("**/contacts/**");
   const contactURL = page.url();
   assert(await page.getByText("Compliance assessment history").isVisible(), "Assessment history did not render.");
-  assert(await page.getByText("Remediation scenario analysis").isVisible(), "Remediation analysis did not render.");
-  const coreBeforeSimulation = await Promise.all([prisma.contact.count(), prisma.complianceAssessment.count(), prisma.complianceResult.count()]);
-  await page.getByRole("button", { name: "Simulate selected" }).click();
-  await page.getByText(/Projected:/).waitFor();
-  const coreAfterSimulation = await Promise.all([prisma.contact.count(), prisma.complianceAssessment.count(), prisma.complianceResult.count()]);
-  assert(JSON.stringify(coreAfterSimulation) === JSON.stringify(coreBeforeSimulation), "Simulation mutated Contact, ComplianceAssessment, or ComplianceResult rows.");
+  assert(await page.getByText("Resolve failed controls").isVisible(), "Corrective-action workspace did not render.");
+  assert(await page.locator(".decision-lab button").count() === 2, "Corrective-action workspace contains an unexpected extra action.");
   await page.getByRole("button", { name: "Request remediation" }).click();
   await page.getByText(/submitted for independent DPO approval/).waitFor();
 
@@ -92,6 +96,8 @@ try {
   await page.waitForURL("**/dashboard");
 
   await page.goto(`${baseURL}/dpo`, { waitUntil: "networkidle" });
+  await page.getByRole("heading", { name: "Review, approve, verify." }).waitFor();
+  await page.getByText("Audit integrity and Merkle proof").click();
   await page.getByText("Audit integrity verification").waitFor();
   const checkpointResponse=page.waitForResponse((response)=>response.url().endsWith("/api/audit/integrity")&&response.request().method()==="POST");
   await page.getByRole("button",{name:"Seal checkpoint"}).click();
@@ -131,6 +137,7 @@ try {
   await page.getByText("Awaiting human action").waitFor();
 
   await page.goto(`${baseURL}/breach`, { waitUntil: "networkidle" });
+  await page.getByText("Log a new incident").click();
   await page.locator('input[name="occurredAt"]').fill(new Date(Date.now() - 3_600_000).toISOString().slice(0, 16));
   await page.locator('input[name="count"]').fill("7");
   await page.locator('textarea[name="description"]').fill("Browser smoke-test incident");
@@ -138,18 +145,14 @@ try {
   await page.getByRole("button", { name: "Create incident" }).click();
   assert((await incidentResponse).ok(), "Incident API rejected the browser journey.");
   await page.reload({ waitUntil: "networkidle" });
-  await page.getByRole("heading", { name: "Browser smoke-test incident" }).waitFor();
-  await page.getByRole("button", { name: "Log Board notification" }).first().click();
-
-  await page.goto(`${baseURL}/rights-requests`, { waitUntil: "networkidle" });
-  await page.locator('select[name="contactId"]').selectOption({ index: 1 });
-  await page.locator('select[name="type"]').selectOption("access");
-  await page.locator('textarea[name="details"]').fill("Browser smoke-test access request");
-  const rightsResponse = page.waitForResponse((response) => response.url().endsWith("/api/rights-requests") && response.request().method() === "POST");
-  await page.getByRole("button", { name: "Create request" }).click();
-  assert((await rightsResponse).ok(), "Rights-request API rejected the browser journey.");
-  await page.reload({ waitUntil: "networkidle" });
-  await page.getByRole("button", { name: "Mark completed" }).first().waitFor();
+  let incidentCard = page.locator(".incident-card", { hasText: "Browser smoke-test incident" });
+  await incidentCard.getByRole("heading", { name: "Browser smoke-test incident" }).waitFor();
+  await incidentCard.getByRole("button", { name: "Log Board notification" }).click();
+  await incidentCard.getByRole("button", { name: "Log affected-person notification" }).click();
+  await incidentCard.getByRole("button", { name: "Mark contained" }).click();
+  await incidentCard.getByRole("button", { name: "Close incident" }).click();
+  incidentCard = page.locator(".incident-card", { hasText: "Browser smoke-test incident" });
+  await incidentCard.getByText("Closed", { exact: true }).waitFor();
 
   await page.goto(contactURL, { waitUntil: "networkidle" });
   await page.getByRole("button", { name: "Ask AI to explain" }).click();
@@ -176,7 +179,7 @@ try {
   await page.waitForURL("**/login**");
 
   assert(consoleErrors.length === 0, `Browser console errors: ${consoleErrors.join(" | ")}`);
-  console.info("Browser journeys A-F passed: interactive rule trace/replay, admin investigation/request, Aditi external-consent sync, independent DPO approval/apply, breach, rights request, AI fallback/explanation, CSV, integrity proof, and mobile layouts.");
+  console.info("Browser journeys A-E passed: interactive rule trace/replay, admin investigation/request, Aditi external-consent sync, independent DPO approval/apply, incident response, AI fallback/explanation, CSV, integrity proof, and mobile layouts.");
 } finally {
   await browser.close();
   await prisma.$disconnect();

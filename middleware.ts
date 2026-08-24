@@ -27,4 +27,4 @@ export async function middleware(request: NextRequest) {
   return NextResponse.redirect(login);
 }
 
-export const config = { matcher: ["/dashboard/:path*", "/contacts/:path*", "/breach/:path*", "/rights-requests/:path*", "/dpo/:path*", "/timeline/:path*", "/api/:path*"] };
+export const config = { matcher: ["/dashboard/:path*", "/contacts/:path*", "/breach/:path*", "/dpo/:path*", "/timeline/:path*", "/api/:path*"] };

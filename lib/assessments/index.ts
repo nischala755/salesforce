@@ -55,8 +55,34 @@ export async function runAssessments(contactIds: string[], actorId: string) {
           results: { create: item.result.results },
         },
       });
-      if (item.result.recommendations.length) {
-        await tx.complianceRecommendation.createMany({ data: item.result.recommendations.map((recommendation) => ({ contactId: item.contact.id, assessmentId: assessment.id, ...recommendation })) });
+      const failedRuleCodes = item.result.recommendations.map((recommendation) => recommendation.ruleCode);
+      await tx.complianceRecommendation.updateMany({
+        where: {
+          contactId: item.contact.id,
+          status: "open",
+          ...(failedRuleCodes.length ? { ruleCode: { notIn: failedRuleCodes } } : {}),
+        },
+        data: { status: "resolved", resolvedAt: evaluatedAt },
+      });
+      if (failedRuleCodes.length) {
+        const existingOpen = await tx.complianceRecommendation.findMany({
+          where: { contactId: item.contact.id, status: "open", ruleCode: { in: failedRuleCodes } },
+          select: { ruleCode: true },
+        });
+        const existingCodes = new Set(existingOpen.map((recommendation) => recommendation.ruleCode));
+        const newRecommendations = item.result.recommendations.filter(
+          (recommendation) => !existingCodes.has(recommendation.ruleCode),
+        );
+        if (newRecommendations.length) {
+          await tx.complianceRecommendation.createMany({
+            data: newRecommendations.map((recommendation) => ({
+              contactId: item.contact.id,
+              assessmentId: assessment.id,
+              ...recommendation,
+            })),
+            skipDuplicates: true,
+          });
+        }
       }
       await writeAudit(tx, { actorId, action: "assessment.completed", entityType: "ComplianceAssessment", entityId: assessment.id, origin: "deterministic", metadata: { contactId: item.contact.id, score: item.result.score, status: item.result.finalStatus } });
       output.push({ id: assessment.id, contactId: item.contact.id, ...item.result });

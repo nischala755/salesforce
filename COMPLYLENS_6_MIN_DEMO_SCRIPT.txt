@@ -1,0 +1,224 @@
+COMPLYLENS - FREE-FLOWING 6-MINUTE DEMO SCRIPT
+================================================
+
+TARGET LENGTH: 5 minutes 45 seconds to 6 minutes
+STYLE: Calm product walkthrough, not a feature checklist
+CORE STORY: Evidence -> deterministic verdict -> governed remediation -> verified history
+
+LOCAL DEMO: http://localhost:3000/login
+
+DEMO ACCOUNTS
+Administrator: admin@complylens.demo
+DPO reviewer: reviewer@complylens.demo
+
+Use the local passwords already provided for this workstation. Do not show either password in the recording.
+
+
+BEFORE RECORDING
+================
+
+1. Use Chrome at 100% zoom and 1920 x 1080.
+2. Close bookmarks, notifications, terminals and unrelated tabs.
+3. Keep the mouse still while speaking; move it only when pointing or clicking.
+4. Confirm Aditi Kapoor starts at 70/100 with DPDP-001 failing.
+5. Confirm Governance shows no pending remediation before the final take.
+6. Fill the Administrator login fields before recording, but do not click Sign in yet.
+7. Keep the DPO credentials ready in a private note outside the recorded area.
+8. Do not click Request remediation during rehearsal unless you will reset the demo database afterward.
+
+OPTIONAL LOCAL RESET BEFORE THE FINAL TAKE
+This erases and reseeds only the isolated local ComplyLens demo database.
+
+Stop the local server first. In PowerShell, from the project folder, run:
+
+$env:DEMO_ADMIN_PASSWORD='ComplyLensAdmin!2026#Local'
+$env:DEMO_REVIEWER_PASSWORD='ComplyLensDPO!2026#Local'
+npx.cmd prisma migrate reset --force
+npm.cmd start
+
+Then confirm Aditi Kapoor is 70/100 before recording.
+
+
+0:00-0:25 - OPENING AND PROBLEM
+================================
+
+ON SCREEN
+Begin on the ComplyLens login page. Click Sign in securely and allow the Overview to appear.
+
+SAY
+"Privacy teams usually have evidence spread across CRM records, consent tools, spreadsheets and tickets. The difficult part is not producing another dashboard. It is turning that evidence into a decision that is reproducible, explainable and accountable. ComplyLens does that through one operating principle: rules decide, AI explains, and humans approve."
+
+TRANSITION
+Pause briefly on the Overview heading: Evidence to accountable action.
+
+
+0:25-0:50 - THE FOCUSED WORKFLOW
+================================
+
+ON SCREEN
+Move across Aditi's four-step path: Evidence, Verdict, Remediation and Verified outcome. Then point to the three metrics: Compliant contacts, Open findings and Awaiting human action.
+
+SAY
+"This single example explains the whole product boundary. The rule engine reads Aditi's expired consent and produces a versioned 70-point verdict. It stops there. Remediation and approval sit outside the engine and require human control. The top of the control room then shows only the three numbers needed to decide what happens next."
+
+TRANSITION
+Scroll smoothly to the Rule Trace Studio.
+
+
+0:50-1:50 - DETERMINISTIC RULE ENGINE
+======================================
+
+ON SCREEN
+The Aditi: expired consent scenario should already be selected. Point to Active consent marked MISSING and the 70/100 result. Move down the execution trace and pause on DPDP-001 v1 with a 30-point deduction.
+
+SAY
+"This is the real deterministic evaluator running in a no-write scenario. Aditi has lawful purpose, current retention, notice evidence and a minimization review, but her consent has expired. DPDP-001 therefore fails, the configured version-one deduction is applied, and the score becomes 70. Every result contains the rule version, reason code, evidence explanation and legal mapping, so the same inputs always produce the same verdict."
+
+ON SCREEN
+Click Fully compliant, then Execute changed evidence. Wait for 100/100. Click Replay identical evidence and show IDENTICAL REPLAY CONFIRMED.
+
+SAY
+"When I restore active consent and execute the same scoring function, the result becomes 100. Replaying identical evidence returns the same score and the same SHA-256 scenario fingerprint. This makes the decision testable without writing anything to customer records."
+
+ON SCREEN
+Click Preview a future rule and briefly show DPDP-006 as INACTIVE and ZERO SCORE IMPACT. Close it afterward if convenient.
+
+SAY
+"The registry is also extensible. A future control can be mapped, tested and versioned before activation. Inactive rules have zero scoring impact, and historical verdicts retain the rule versions that originally produced them."
+
+
+1:50-2:15 - ENGINE TRANSPARENCY AND PRIORITY GRAPH
+==================================================
+
+ON SCREEN
+Open How the scoring engine works. Move across Normalize evidence, Evaluate controls, Calculate posture and Persist the verdict. Collapse it, then show Prioritized control improvements.
+
+SAY
+"The decision boundary is deliberately simple: normalize evidence, evaluate active controls, calculate posture and append the verdict. AI sits outside this boundary. The impact graph then aggregates failed controls across the latest assessments, showing which remediation would recover the most points and improve the most statuses without changing any records."
+
+TRANSITION
+Click Investigate contacts.
+
+
+2:15-3:15 - INVESTIGATE ADITI AND REQUEST REMEDIATION
+=====================================================
+
+ON SCREEN
+Search for Aditi Kapoor and open her record. Show 70/100, the DPDP-001 finding and the single DPDP-001 item in Open recommendations.
+
+SAY
+"Now I will move from a portfolio signal to one customer record. Aditi's latest persisted verdict is 70, and the exact failure is expired consent. The action register contains one distinct recommendation for that control. Reassessing the same unresolved evidence does not create repetitive open items."
+
+ON SCREEN
+Click Ask AI to explain and wait for the structured briefing.
+
+SAY
+"Ask AI to explain reads only minimized metadata from the saved verdict. Instead of repeating every rule, it identifies the primary score constraint, cross-control patterns and the verification gap. Each insight cites its supporting rule codes, and every next action has an owner and a measurable success signal. It still cannot calculate the score, change status or write evidence."
+
+ON SCREEN
+Show the consent handoff. Click Request remediation and wait for the success message.
+
+SAY
+"The CRM operator also cannot grant consent on Aditi's behalf. ComplyLens queues an external consent handoff and creates a remediation request. Consent is recorded only after Aditi responds through that external channel and a separate DPO reviewer verifies the response."
+
+TRANSITION
+Log out. Stop this clip if necessary, fill the DPO credentials privately, and resume before clicking Sign in securely.
+
+
+3:15-4:20 - INDEPENDENT DPO APPROVAL
+====================================
+
+ON SCREEN
+Sign in as the DPO reviewer. Open Governance. Point to the compact metrics and the Aditi consent-renewal row.
+
+SAY
+"I have now switched personas. The primary governance user is the DPO or Privacy Operations Lead. This view is intentionally not another CRM dashboard. It contains the independent decision queue, retention pressure and evidence tools needed for oversight."
+
+ON SCREEN
+Click Approve outreach. Wait for Sync verified consent & reassess. Click it and accept the confirmation dialog. Wait until the row disappears.
+
+SAY
+"A different reviewer approves the outreach, enforcing separation of duties. Once the external response is available, the DPO confirms that it was independently verified, synchronizes only the required evidence, and triggers a new assessment. The pending item disappears because the governed action is complete. The earlier 70-point verdict is not overwritten; a new assessment is appended."
+
+ON SCREEN
+Open Investigate, search Aditi Kapoor, open her record and show 100/100. Briefly show Score and control changes over time.
+
+SAY
+"Aditi now scores 100 with active consent found. Her history still shows the earlier result and the control that was resolved, creating a clear before-and-after trail rather than silently rewriting the past."
+
+
+4:20-5:00 - TAMPER-EVIDENT AUDIT PROOF
+======================================
+
+ON SCREEN
+Return to Governance. Open Audit integrity and Merkle proof. Wait for Verified. Show the hash-chain statistics, current root, Merkle tree and inclusion proof. Optionally click Seal checkpoint once during the final take.
+
+SAY
+"Every important user action is canonically encoded and linked with SHA-256. ComplyLens can seal those entries into a Merkle checkpoint and produce an inclusion proof or portable JSON bundle. This is tamper-evident rather than absolute database immutability: an inconsistency can be detected, while external root anchoring and database-enforced write controls remain production-hardening steps."
+
+
+5:00-5:25 - INCIDENT MILESTONES
+================================
+
+ON SCREEN
+Click Incidents. Show Active incidents, Affected contacts, Overdue milestones and Next deadline. Move across Detected, Contained and Closed, then show the two notification-evidence milestones.
+
+SAY
+"The incident cockpit separates operational state from notification evidence. It surfaces active scope, overdue milestones and the next deadline, then tracks the case from detected to contained to closed. Closure is guarded: both notification records must exist first, and every transition becomes audit evidence."
+
+
+5:25-5:45 - READINESS TIMELINE
+==============================
+
+ON SCREEN
+Return to Governance and click View readiness timeline. Move across Foundation, Consent Manager and Full operational rules.
+
+SAY
+"The readiness timeline maps the latest persisted control results to each configured rollout phase. These percentages are internal operational indicators, not legal certification, and the blocking contacts link directly back to the evidence that needs attention."
+
+
+5:45-6:00 - CLOSE
+=================
+
+ON SCREEN
+Return to Overview and pause on Aditi's four-stage decision path or use a simple closing card.
+
+SAY
+"ComplyLens turns fragmented evidence into reproducible decisions, human-approved remediation and verifiable history. Rules decide, AI explains, humans approve, and the evidence remains accountable."
+
+END CARD TEXT
+COMPLYLENS
+Evidence to accountable action.
+Rules decide. AI explains. Humans approve.
+https://complylens.onrender.com/login
+
+
+RECORDING NOTES
+===============
+
+- Speak at approximately 135 to 140 words per minute and narrate while clicking.
+- Do not read every label. Explain the decision being made while the interface supplies the detail.
+- Pause for one second after every major result: 70, 100, approval, reassessment and Verified.
+- Cut login typing, page-loading delays and long scrolling pauses.
+- Keep the public Render URL only on the closing card; record the workflow locally to avoid free-tier cold starts.
+- Do not show passwords, the Mistral API key, browser developer tools or environment files.
+- If time exceeds six minutes, remove the Incident and Timeline sections first. Do not shorten the rule-engine or governed-remediation story.
+- If time is under five minutes thirty seconds, slow down around the 70-to-100 rule trace and the DPO approval; those are the strongest proof points.
+
+
+FINAL CHECKLIST
+===============
+
+[ ] Aditi begins at 70/100 with DPDP-001 failing.
+[ ] Rule replay confirms an identical fingerprint.
+[ ] Future DPDP-006 remains inactive with zero score impact.
+[ ] Open recommendations contain one distinct item per failed control.
+[ ] The AI brief shows cited insights, owned actions and measurable success signals.
+[ ] AI output is structured and described as read-only.
+[ ] The Administrator requests remediation but does not approve it.
+[ ] The DPO verifies and syncs the external consent response.
+[ ] Aditi ends at 100/100 and the earlier verdict remains in history.
+[ ] Audit integrity shows Verified and Merkle proof is visible.
+[ ] Rights Requests does not appear anywhere.
+[ ] No passwords or secrets appear in the recording.
+[ ] The final exported video is no longer than six minutes.

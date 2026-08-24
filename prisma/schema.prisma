@@ -40,18 +40,6 @@ enum RemediationStatus {
   applied
 }
 
-enum RightsRequestType {
-  access
-  correction
-  erasure
-  grievance
-}
-
-enum RequestStatus {
-  open
-  completed
-}
-
 enum IncidentStatus {
   open
   contained
@@ -96,7 +84,6 @@ model Contact {
   purposes              ProcessingPurpose[]
   assessments           ComplianceAssessment[]
   recommendations       ComplianceRecommendation[]
-  rightsRequests        RightsRequest[]
   remediationTargets    RemediationTarget[]
   blastRadiusSources    BlastRadiusLink[]          @relation("BlastRadiusSource")
   blastRadiusRelated    BlastRadiusLink[]          @relation("BlastRadiusRelated")
@@ -225,21 +212,6 @@ model BlastRadiusLink {
   @@index([relatedContactId])
 }
 
-model RightsRequest {
-  id          String            @id @default(cuid())
-  contactId   String
-  type        RightsRequestType
-  status      RequestStatus     @default(open)
-  details     String?
-  createdAt   DateTime          @default(now())
-  dueAt       DateTime
-  completedAt DateTime?
-  contact     Contact           @relation(fields: [contactId], references: [id], onDelete: Cascade)
-
-  @@index([status, dueAt])
-  @@index([contactId])
-}
-
 model IncidentLog {
   id                        String         @id @default(cuid())
   occurredAt                DateTime
@@ -285,15 +257,11 @@ model RemediationTarget {
 }
 
 model OrganizationSettings {
-  id                 String   @id @default("default")
-  organizationName   String
-  sdfMode            Boolean  @default(false)
-  accessSlaHours     Int      @default(720)
-  correctionSlaHours Int      @default(720)
-  erasureSlaHours    Int      @default(720)
-  grievanceSlaHours  Int      @default(168)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  id               String   @id @default("default")
+  organizationName String
+  sdfMode          Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
 /// Append-only at the application layer. DB triggers/WORM storage are a Phase 2 hardening item.
